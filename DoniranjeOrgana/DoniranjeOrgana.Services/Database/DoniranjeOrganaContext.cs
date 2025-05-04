@@ -268,6 +268,7 @@ namespace DoniranjeOrgana.Services.Database
             });
 
             OnModelCreatingPartial(modelBuilder);
+            modelBuilder.Seed();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
