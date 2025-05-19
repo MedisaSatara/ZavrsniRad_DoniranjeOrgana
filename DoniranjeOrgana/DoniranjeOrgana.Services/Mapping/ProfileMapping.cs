@@ -68,6 +68,11 @@ namespace DoniranjeOrgana.Services.Mapping
 
             CreateMap<Database.Terapija, Models.Model.Terapija>();
 
+            CreateMap<Database.DonorskiFormula, Models.Model.DonorskiFormular>();
+            CreateMap<DonorskiFormularSearchObject, Database.DonorskiFormula>();
+            CreateMap<DonorskiFormularInsertRequest, Database.DonorskiFormula>();
+            CreateMap<DonorskiFormularUpdateRequest, Database.DonorskiFormula>();
+
 
         }
     }

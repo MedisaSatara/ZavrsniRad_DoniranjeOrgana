@@ -9,7 +9,10 @@ using DoniranjeOrgana.Models.Model;
 
 namespace DoniranjeOrgana.Controllers
 {
-    [ApiController]
+    [Authorize(Roles = "Korisnik")]
+    [AllowAnonymous]
+    [Route("[controller]")]
+
     public class KorisnikController : BaseCRUDController<Models.Model.Korisnik, KorisnikSearchObject, KorisnikInsertRequest, KorisnikUpdateRequest>
     {
         public KorisnikController(ILogger<BaseController<Models.Model.Korisnik, KorisnikSearchObject>> logger, IKorisnikService service) : base(logger, service)
@@ -17,7 +20,8 @@ namespace DoniranjeOrgana.Controllers
 
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Korisnik")]
+        
         public override Korisnik Insert([FromBody] KorisnikInsertRequest insert)
         {
             return base.Insert(insert);

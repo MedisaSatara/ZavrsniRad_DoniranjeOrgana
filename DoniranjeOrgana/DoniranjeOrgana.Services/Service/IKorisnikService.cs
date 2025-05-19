@@ -14,6 +14,7 @@ namespace DoniranjeOrgana.Services.Service
         bool ProvjeriLozinku(int korisnikId, string staraLozinka);
         bool PromeniLozinku(int korisnikId, string staraLozinka, string novaLozinka);
         Task DeleteKorisnikAsync(int korisnikId);
+        Models.Model.Korisnik Insert(KorisnikInsertRequest request);
 
     }
 }

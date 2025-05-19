@@ -31,6 +31,35 @@ namespace DoniranjeOrgana.Services.Service
             //entity.Uloga = insert.UlogaId;
             base.BeforeInsert(insert, entity);
         }
+        public override Models.Model.Korisnik Insert(KorisnikInsertRequest request)
+        {
+            var korisnik = base.Insert(request); // kreira korisnika
+
+            // Pronađi ili kreiraj ulogu "Korisnik"
+            var uloga = _context.Ulogas.FirstOrDefault(u => u.Naziv == "Korisnik");
+            if (uloga == null)
+            {
+                uloga = new Uloga
+                {
+                    Naziv = "Korisnik"
+                };
+                _context.Ulogas.Add(uloga);
+                _context.SaveChanges();
+            }
+
+            // Veza korisnik-uloga
+            var korisnikUloga = new KorisnikUloga
+            {
+                KorisnikId = korisnik.KorisnikId,
+                UlogaId = uloga.UlogaId
+            };
+
+            _context.KorisnikUlogas.Add(korisnikUloga);
+            _context.SaveChanges();
+
+            return korisnik;
+        }
+
         public static string GenerateSalt()
         {
             RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();

@@ -1,7 +1,9 @@
 using DoniranjeOrgana;
 using DoniranjeOrgana.Filter;
 using DoniranjeOrgana.Models.Model;
+using DoniranjeOrgana.Service.RabbitMQ;
 using DoniranjeOrgana.Services.Database;
+using DoniranjeOrgana.Services.RabbitMQ;
 using DoniranjeOrgana.Services.Service;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +30,9 @@ builder.Services.AddTransient<ITerapijaService, TerapijaService>();
 builder.Services.AddTransient<IUlogaService, UlogaService>();
 builder.Services.AddTransient<IKorisnikUlogaService, KorisnikUlogaService>();
 builder.Services.AddTransient<IOboljenjeService, OboljenjeService>();
+builder.Services.AddTransient<IDonorskiFormularService, DonorskiFormularService>();
+builder.Services.AddSingleton<IMailProducer, MailProducer>();
+
 
 
 builder.Services.AddControllers()
@@ -97,5 +102,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<DoniranjeOrganaContext>();
+    dataContext.Database.Migrate();
+}
 
 app.Run();

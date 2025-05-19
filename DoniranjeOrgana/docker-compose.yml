@@ -1,0 +1,79 @@
+version: '3'
+services:
+  # RabbitMQ Docker
+  rabbitmqq:
+    image: rabbitmq:3-management
+    container_name: rabbitmqq
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=test
+      - RABBITMQ_DEFAULT_PASS=test
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - doniranjeorgananet
+
+#mssql docker
+  doniranjeorgana-sql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=st123W!a
+      - MSSQL_PID=Developer
+    ports:
+      - 1401:1433
+    expose:
+      - 1433
+    networks:
+      - doniranjeorgananet
+
+  doniranjeorgana-api:
+    restart: unless-stopped
+    build:
+      context: .
+    environment:
+      - ConnectionStrings:DefaultConnection=Server=doniranjeorgana-sql,1433;Database=DoniranjOorgana;User=sa;Password=st123W!a;ConnectRetryCount=0; TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=test
+      - RABBITMQ_PASSWORD=test
+      - SMTP_SERVER=smtp.outlook.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=tt8915119@gmail.com
+      - SMTP_PASSWORD=pass12$TEST22
+    ports:
+      - 7074:7074
+    networks:
+      - doniranjeorgananet
+    links:
+      - doniranjeorgana-sql
+    depends_on:
+      - doniranjeorgana-sql
+      - rabbitmqq
+
+        # RabbitMQ Service Docker
+  rabbitmq-service:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./DoniranjeOrgana.Subscriber/Dockerfile
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=test
+      - RABBITMQ_PASSWORD=test
+      - SMTP_SERVER=smtp.outlook.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=tt8915119@gmail.com
+      - SMTP_PASSWORD=pass12$TEST22
+    depends_on:
+      - rabbitmqq
+    networks:
+      - doniranjeorgananet
+      
+networks:
+  doniranjeorgananet:
+    driver: bridge     
