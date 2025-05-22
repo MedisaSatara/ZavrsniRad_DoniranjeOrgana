@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:doniranjeorgana_mobile/models/korisnik.dart';
 import 'package:doniranjeorgana_mobile/providers/korisnik_provider.dart';
-import 'package:doniranjeorgana_mobile/widgets/background_screen.dart';
 import 'package:doniranjeorgana_mobile/widgets/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:doniranjeorgana_mobile/models/pacijent.dart';
@@ -102,207 +101,120 @@ class _PacijentPodaciScreenState extends State<PacijentPodaciScreen> {
     final p = widget.pacijent;
     final korisnik = korisnikResult?.first;
 
-    return BackgroundScaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        elevation: 0,
-        title: const Text(
-          "Organ4Life",
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 24, top: 32),
-              child: Text(
-                "Detalji pacijenta",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-            const SizedBox(height: 54),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color:
-                      const Color.fromARGB(255, 106, 20, 20).withOpacity(0.95),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
+    return MasterScreenWidget(
+      title: "User profile",
+      child: korisnik != null
+          ? SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Center(
+                    child: Column(
+                      children: [
+                        _buildProfilePicture(korisnik.slika),
+                        SizedBox(height: 12),
+                        Text(korisnik.korisnickoIme!,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromARGB(255, 255, 255, 255))),
+                        SizedBox(height: 4),
+                        Text(korisnik.email!,
+                            style: TextStyle(
+                                fontSize: 14, color:  const Color.fromARGB(255, 90, 22, 6))),
+                      ],
+                    ),
                   ),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-                  child: korisnik != null
-                      ? SingleChildScrollView(
-                          physics: ClampingScrollPhysics(),
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: [
-                                  Center(
-                                    child: Column(
-                                      children: [
-                                        _buildProfilePicture(korisnik.slika),
-                                        SizedBox(height: 12),
-                                        Text(korisnik.korisnickoIme!,
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.teal[800])),
-                                        SizedBox(height: 4),
-                                        Text(korisnik.email!,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey[700])),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 24),
-                                  ExpansionTile(
-                                    leading:
-                                        Icon(Icons.person, color: Colors.teal),
-                                    title: Text('Personal Information',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.teal[700],
-                                            fontSize: 16)),
-                                    initiallyExpanded: personalInfoExpanded,
-                                    onExpansionChanged: (val) {
-                                      setState(
-                                          () => personalInfoExpanded = val);
-                                    },
-                                    children: [
-                                      _buildInfoRow('Ime:', p.ime),
-                                      _buildInfoRow('Prezime:', p.prezime),
-                                      _buildInfoRow('Spol:', p.spol),
-                                      _buildInfoRow(
-                                          'Datum rođenja:', p.datumRodjenja),
-                                      _buildInfoRow(
-                                          'Mjesto rođenja:', p.mjestoRodjenja),
-                                      _buildInfoRow('JMBG:', p.jmbg),
-                                      _buildInfoRow('Telefon:', p.telefon),
-                                      _buildInfoRow(
-                                          'Prebivalište:', p.prebivaliste),
-                                    ],
-                                  ),
-                                  Divider(),
-                                  ExpansionTile(
-                                    leading: Icon(Icons.medical_services,
-                                        color: Colors.teal),
-                                    title: Text('Medical Condition',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.teal[700],
-                                            fontSize: 16)),
-                                    initiallyExpanded: medicalConditionExpanded,
-                                    onExpansionChanged: (val) {
-                                      setState(
-                                          () => medicalConditionExpanded = val);
-                                    },
-                                    children: [
-                                      _buildInfoRow(
-                                          'Krvna grupa:', p.krvnaGrupa),
-                                      _buildInfoRow('Rh faktor:', p.rhFaktor),
-                                      _buildInfoRow(
-                                          'Broj kartona:', p.brojKartona),
-                                    ],
-                                  ),
-                                  Divider(),
-                                  ExpansionTile(
-                                    leading: Icon(Icons.warning_amber_rounded,
-                                        color: Colors.teal),
-                                    title: Text('Alergije',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.teal[700],
-                                            fontSize: 16)),
-                                    initiallyExpanded: allergiesExpanded,
-                                    onExpansionChanged: (val) {
-                                      setState(() => allergiesExpanded = val);
-                                    },
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
-                                        child: Text(
-                                            p.alergija ?? 'Nema alergija',
-                                            style: TextStyle(fontSize: 14)),
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(),
-                                  ExpansionTile(
-                                    leading: Icon(Icons.history_edu,
-                                        color: Colors.teal),
-                                    title: Text('Disease History',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.teal[700],
-                                            fontSize: 16)),
-                                    initiallyExpanded: diseaseHistoryExpanded,
-                                    onExpansionChanged: (val) {
-                                      setState(
-                                          () => diseaseHistoryExpanded = val);
-                                    },
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
-                                        child: Text(
-                                            p.hronicneBolesti ??
-                                                'Nema hroničnih bolesti',
-                                            style: TextStyle(fontSize: 14)),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: SizedBox(
-                                      width: 100,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Color.fromARGB(255, 190, 36, 25),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 15),
-                                          textStyle: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.white),
-                                        ),
-                                        child: Text("BACK",
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                        )
-                      : Center(child: CircularProgressIndicator()),
-                ),
+                  SizedBox(height: 24),
+                  ExpansionTile(
+                    leading: Icon(Icons.person, color:  const Color.fromARGB(255, 90, 22, 6)),
+                    title: Text('Personal Information',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 90, 22, 6),
+                            fontSize: 16)),
+                    initiallyExpanded: personalInfoExpanded,
+                    onExpansionChanged: (val) {
+                      setState(() => personalInfoExpanded = val);
+                    },
+                    children: [
+                      _buildInfoRow('First Name:', p.ime),
+                      _buildInfoRow('Last Name:', p.prezime),
+                      _buildInfoRow('Spol:', p.spol),
+                      _buildInfoRow('Birth date:', p.datumRodjenja),
+                      _buildInfoRow('Birth city:', p.mjestoRodjenja),
+                      _buildInfoRow('JMBG:', p.jmbg),
+                      _buildInfoRow('Phone number:', p.telefon),
+                      _buildInfoRow('Home city:', p.prebivaliste),
+                    ],
+                  ),
+                  Divider(),
+                  ExpansionTile(
+                    leading: Icon(Icons.medical_services, color:  const Color.fromARGB(255, 90, 22, 6)),
+                    title: Text('Medical Condition',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color:  const Color.fromARGB(255, 90, 22, 6),
+                            fontSize: 16)),
+                    initiallyExpanded: medicalConditionExpanded,
+                    onExpansionChanged: (val) {
+                      setState(() => medicalConditionExpanded = val);
+                    },
+                    children: [
+                      _buildInfoRow('Blood type:', p.krvnaGrupa),
+                      _buildInfoRow('Rh factor:', p.rhFaktor),
+                    ],
+                  ),
+                  Divider(),
+                  ExpansionTile(
+                    leading:
+                        Icon(Icons.warning_amber_rounded, color:  const Color.fromARGB(255, 90, 22, 6)),
+                    title: Text('Allergy',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color:  const Color.fromARGB(255, 90, 22, 6),
+                            fontSize: 16)),
+                    initiallyExpanded: allergiesExpanded,
+                    onExpansionChanged: (val) {
+                      setState(() => allergiesExpanded = val);
+                    },
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Text(p.alergija ?? 'No Allergy',
+                            style: TextStyle(fontSize: 14)),
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  ExpansionTile(
+                    leading: Icon(Icons.history_edu, color:  const Color.fromARGB(255, 90, 22, 6)),
+                    title: Text('Disease History',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 90, 22, 6),
+                            fontSize: 16)),
+                    initiallyExpanded: diseaseHistoryExpanded,
+                    onExpansionChanged: (val) {
+                      setState(() => diseaseHistoryExpanded = val);
+                    },
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Text(
+                            p.hronicneBolesti ?? 'No disease',
+                            style: TextStyle(fontSize: 14)),
+                      ),
+                    ],
+                  ),
+                  
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+            )
+          : Center(child: CircularProgressIndicator()),
     );
   }
 }

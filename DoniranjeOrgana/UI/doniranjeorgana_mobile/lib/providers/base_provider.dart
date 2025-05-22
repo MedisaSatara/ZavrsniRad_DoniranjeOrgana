@@ -15,10 +15,8 @@ abstract class BaseProvider<T> with ChangeNotifier {
         defaultValue: "http://10.0.2.2:7074/");
     totalUrl = "$_baseUrl$_endpoint";
   }
-  //https://localhost:7040/swagger/index.html
-  //https://localhost:7285/
-  //http://localhost:7073/
   //https://localhost:7040/
+  //http://10.0.2.2:7074/
   Future<SearchResult<T>> get({dynamic filter}) async {
     var url = "$_baseUrl$_endpoint";
 
@@ -163,56 +161,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
       "Content-Type": "application/json",
       "Authorization": Basic,
     };
-  }
-
-
-  Future<bool> provjeriStaruLozinku(int korisnikId, String staraLozinka) async {
-    String url = totalUrl ?? "$_baseUrl$_endpoint";
-
-    try {
-      var response = await http.post(
-        Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "korisnikId": korisnikId,
-          "staraLozinka": staraLozinka,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body) as bool;
-      } else {
-        print("Greška: ${response.statusCode}");
-        return false;
-      }
-    } catch (e) {
-      print("Greška: $e");
-      return false;
-    }
-  }
-
-  Future<bool> checkOldPassword(int korisnikId, String oldPassword) async {
-    final url = totalUrl ?? "$_baseUrl$_endpoint";
-
-    // final url = Uri.parse('https://localhost:7285/Korisnik/provjeriLozinku');
-
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'korisnikId': korisnikId,
-        'staraLozinka': oldPassword,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['isPasswordCorrect'] ?? false;
-    } else {
-      throw Exception('Failed to check password');
-    }
   }
 
   Future<T> getById(int? id) async {

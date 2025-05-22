@@ -121,27 +121,27 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                             ),
                             SizedBox(height: 30),
                             _buildInputField(
-                              label: 'Ime',
+                              label: 'First name',
                               icon: Icons.person,
                               onChanged: (val) => ime = val,
                               validator: (val) =>
-                                  val!.isEmpty ? 'Unesite ime' : null,
+                                  val!.isEmpty ? 'Enter first name' : null,
                             ),
                             SizedBox(height: 8),
                             _buildInputField(
-                              label: 'Prezime',
+                              label: 'Last name',
                               icon: Icons.person_outline,
                               onChanged: (val) => prezime = val,
                               validator: (val) =>
-                                  val!.isEmpty ? 'Unesite prezime' : null,
+                                  val!.isEmpty ? 'Enter last name' : null,
                             ),
                             SizedBox(height: 8),
                             _buildInputField(
-                              label: 'Korisničko ime',
+                              label: 'Username',
                               icon: Icons.account_circle,
                               onChanged: (val) => korisnickoIme = val,
                               validator: (val) => val!.isEmpty
-                                  ? 'Unesite korisničko ime'
+                                  ? 'Enter username'
                                   : null,
                             ),
                             SizedBox(height: 8),
@@ -151,12 +151,12 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                               onChanged: (val) => email = val,
                               validator: (val) =>
                                   val!.isNotEmpty && !val.contains('@')
-                                      ? 'Neispravan email'
+                                      ? 'Incorrect email'
                                       : null,
                             ),
                             SizedBox(height: 8),
                             _buildInputField(
-                              label: 'Lozinka',
+                              label: 'Password',
                               icon: Icons.lock,
                               obscureText: true,
                               onChanged: (val) => lozinka = val,
@@ -165,12 +165,12 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                             ),
                             SizedBox(height: 8),
                             _buildInputField(
-                              label: 'Potvrdi lozinku',
+                              label: 'Confirm password',
                               icon: Icons.lock_outline,
                               obscureText: true,
                               onChanged: (val) => potvrdaLozinke = val,
                               validator: (val) => val != lozinka
-                                  ? 'Lozinke se ne podudaraju'
+                                  ? 'Password doesn\t match.'
                                   : null,
                             ),
                             SizedBox(height: 30),
@@ -187,7 +187,7 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                                                     255, 255, 255, 255)),
                                       ),
                                       child: Text(
-                                        "Registruj se",
+                                        "Register",
                                         style: TextStyle(
                                             fontSize: 18, color: Colors.red),
                                       ),
@@ -198,7 +198,7 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Već imate račun? ",
+                                  "Already have an account? ",
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 GestureDetector(
@@ -206,7 +206,7 @@ class _RegistracijaScreenState extends State<RegistracijaScreen> {
                                     Navigator.of(context).pop();
                                   },
                                   child: Text(
-                                    "Prijavite se!",
+                                    "Sign in!",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,

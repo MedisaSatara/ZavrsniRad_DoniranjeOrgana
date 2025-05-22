@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:doniranjeorgana_mobile/models/donorski_formular.dart';
 import 'package:doniranjeorgana_mobile/models/pacijent.dart';
 import 'package:doniranjeorgana_mobile/providers/donorski_formular_provider.dart';
+import 'package:doniranjeorgana_mobile/providers/korisnik_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/pacijent_provider.dart';
 import 'package:doniranjeorgana_mobile/widgets/master_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,10 @@ import 'package:signature/signature.dart';
 class DonorskiFormularScreen extends StatefulWidget {
   final Function? onDataChanged;
   final String? korisnikIme;
+  Pacijent? pacijent;
 
-  DonorskiFormularScreen({Key? key, this.onDataChanged, this.korisnikIme})
+  DonorskiFormularScreen(
+      {Key? key, this.onDataChanged, this.korisnikIme, this.pacijent})
       : super(key: key);
 
   @override
@@ -26,15 +29,18 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   late DonorskiFormularProvider _donorskiFormularProvider;
   late PacijentProvider _pacijentProvider;
+  late KorisnikProvider _korisnikProvider;
 
   List<Pacijent>? _pacijenti;
-  String? _selectedPacijentId;
+  Pacijent? _selectedPacijentId;
+  DonorskiFormular? _prethodnoPopunjen;
 
   final controller = SignatureController(
-      penColor: Colors.white,
+      penColor: Colors.black,
       penStrokeWidth: 3,
       exportPenColor: Colors.red,
       exportBackgroundColor: Colors.black);
+
   @override
   void dispose() {
     controller.dispose();
@@ -42,10 +48,17 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _donorskiFormularProvider = context.read<DonorskiFormularProvider>();
     _pacijentProvider = context.read<PacijentProvider>();
+    _korisnikProvider = context.read<KorisnikProvider>();
+
     _fetchPatients();
   }
 
@@ -54,6 +67,12 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
       var pacijentiData = await _pacijentProvider.get();
       setState(() {
         _pacijenti = pacijentiData.result;
+
+        if (widget.korisnikIme != null) {
+          _selectedPacijentId = _pacijenti?.firstWhere(
+            (p) => "${p.ime} ${p.prezime}" == widget.korisnikIme,
+          );
+        }
       });
     } catch (e) {
       print('Error fetching patients: $e');
@@ -73,18 +92,30 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.saveAndValidate()) {
       final formData = _formKey.currentState!.value;
-
       final mutableFormData = Map<String, dynamic>.from(formData);
 
-      if (mutableFormData['pacijentId'] != null) {
-        mutableFormData['pacijentId'] =
-            int.tryParse(mutableFormData['pacijentId'] as String) ?? 0;
+      if (_selectedPacijentId != null) {
+        mutableFormData['pacijentId'] = _selectedPacijentId!.pacijentId;
       }
+
+      if (mutableFormData.containsKey('saglasnost')) {
+        mutableFormData['saglasnost'] =
+            mutableFormData['saglasnost'] == true ? 1 : 0;
+      }
+
+      if (controller.isNotEmpty) {
+        final signatureBytes = await controller.toPngBytes();
+        if (signatureBytes != null) {
+          mutableFormData['potpis'] = base64Encode(signatureBytes);
+        }
+      }
+
+      mutableFormData['insert'] = true;
 
       try {
         await _donorskiFormularProvider
             .insert(DonorskiFormular.fromJson(mutableFormData));
-        _showSuccessMessage('Appointment successfully added!');
+        _showSuccessMessage('Donor form successfully added!');
 
         if (widget.onDataChanged != null) {
           widget.onDataChanged!();
@@ -95,8 +126,7 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
         print('Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text('Failed to save the appointment. Please try again.')),
+              content: Text('Failed to save the donor. Please try again.')),
         );
       }
     }
@@ -123,7 +153,7 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Text(
-                        'Ime korisnika: ${widget.korisnikIme}',
+                        '${widget.korisnikIme} , add your application to the donor list!',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -132,63 +162,6 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
                       ),
                     ),
                   buildForm(),
-                  Text(
-                    'Vaš elektronski potpis:',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey[100],
-                    ),
-                    height: 150,
-                    child: Signature(
-                      controller: controller,
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton.icon(
-                        icon: Icon(Icons.save),
-                        label: Text("Spremi potpis"),
-                        onPressed: () async {
-                          if (controller.isNotEmpty) {
-                            final signature = await controller.toPngBytes();
-                            if (signature != null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Potpis je spremljen!')),
-                              );
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 190, 36, 25),
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                      OutlinedButton.icon(
-                        icon: Icon(Icons.clear),
-                        label: Text("Očisti"),
-                        onPressed: () => controller.clear(),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor:
-                              const Color.fromARGB(255, 190, 36, 25),
-                          side: BorderSide(
-                              color: const Color.fromARGB(255, 190, 36, 25)),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -214,7 +187,6 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24),
-
           FormBuilderTextField(
             name: "datumPrijave",
             readOnly: true,
@@ -249,7 +221,6 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
             },
           ),
           SizedBox(height: 20),
-
           FormBuilderTextField(
             name: "organiZaDonaciju",
             decoration: InputDecoration(
@@ -267,11 +238,9 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
             },
           ),
           SizedBox(height: 20),
-          SizedBox(height: 20),
-
           FormBuilderCheckbox(
             name: 'saglasnost',
-            title: Text('Saglasan sam sa doniranjem'),
+            title: Text('I agree to donate.'),
             validator: (value) {
               if (value != true) {
                 return 'Morate dati saglasnost!';
@@ -280,56 +249,10 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
             },
           ),
           SizedBox(height: 20),
-
-          FormBuilderDropdown<String>(
-            name: 'nacinSaglasnosti',
-            decoration: InputDecoration(
-              labelText: 'Način saglasnosti',
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-            ),
-            items: [
-              DropdownMenuItem(value: 'Pismena', child: Text('Pismena')),
-              DropdownMenuItem(value: 'Usmena', child: Text('Usmena')),
-              DropdownMenuItem(
-                  value: 'Elektronska', child: Text('Elektronska')),
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Odaberite način saglasnosti';
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: 20),
-
-          FormBuilderDropdown<String>(
-            name: 'statusPrijave',
-            decoration: InputDecoration(
-              labelText: 'Status prijave',
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-            ),
-            items: [
-              DropdownMenuItem(value: 'Na čekanju', child: Text('Na čekanju')),
-              DropdownMenuItem(value: 'Odobrena', child: Text('Odobrena')),
-              DropdownMenuItem(value: 'Odbijena', child: Text('Odbijena')),
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Odaberite status prijave';
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: 20),
-
           FormBuilderTextField(
             name: 'napomena',
             decoration: InputDecoration(
-              labelText: 'Napomena',
+              labelText: 'Note',
               border: OutlineInputBorder(),
               filled: true,
               fillColor: Colors.grey.shade100,
@@ -337,12 +260,11 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
             maxLines: 3,
           ),
           SizedBox(height: 20),
-
           FormBuilderTextField(
             name: "datumAzuriranja",
             readOnly: true,
             decoration: InputDecoration(
-              labelText: "Datum ažuriranja",
+              labelText: "Date of update",
               border: OutlineInputBorder(),
               suffixIcon: Icon(Icons.calendar_today, color: Colors.blueAccent),
               filled: true,
@@ -371,36 +293,71 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
               return null;
             },
           ),
-
-          FormBuilderDropdown<String>(
-            name: 'pacijentId',
-            decoration: InputDecoration(
-              labelText: 'Select Patient',
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: Colors.grey.shade100,
+          SizedBox(
+            height: 20,
+          ),
+          if (_selectedPacijentId != null)
+            Text(
+              'Patient: ${_selectedPacijentId!.ime} ${_selectedPacijentId!.prezime}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            items: _pacijenti
-                    ?.map((pacijent) => DropdownMenuItem<String>(
-                          value: pacijent.pacijentId.toString(),
-                          child: Text(pacijent.ime ?? ""),
-                        ))
-                    .toList() ??
-                [],
-            onChanged: (value) {
-              setState(() {
-                _selectedPacijentId = value;
-              });
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please select a patient!';
-              }
-              return null;
-            },
+          SizedBox(height: 30),
+          Text(
+            'Please, add your signature',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey[100],
+            ),
+            height: 150,
+            child: Signature(
+              controller: controller,
+              backgroundColor: Colors.transparent,
+            ),
+          ),
+          SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton.icon(
+                icon: Icon(Icons.save),
+                label: Text("Save"),
+                onPressed: () async {
+                  if (controller.isNotEmpty) {
+                    final signature = await controller.toPngBytes();
+                    if (signature != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Potpis je spremljen!')),
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 190, 36, 25),
+                  foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              OutlinedButton.icon(
+                icon: Icon(Icons.clear),
+                label: Text("Clear"),
+                onPressed: () => controller.clear(),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color.fromARGB(255, 190, 36, 25),
+                  side:
+                      BorderSide(color: const Color.fromARGB(255, 190, 36, 25)),
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 30),
-
           Row(
             children: [
               Expanded(

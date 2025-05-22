@@ -19,14 +19,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     "Legalities": false,
     "Become a Donor": true,
   };
-  final controller = SignatureController(
-      penColor: Colors.white,
-      penStrokeWidth: 3,
-      exportPenColor: Colors.red,
-      exportBackgroundColor: Colors.black);
+
   @override
   void dispose() {
-    controller.dispose();
     super.dispose();
   }
 
@@ -76,7 +71,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 switches[keyName] = val;
               });
             },
-            activeColor: const Color.fromARGB(255, 190, 36, 25),
+            activeColor:Color.fromARGB(255, 112, 14, 14),
           )
         ],
       ),
@@ -93,7 +88,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         title: const Text(
           "Organ4Life",
           style: TextStyle(
-            color: Colors.black87,
+            color:Color.fromARGB(255, 112, 14, 14),
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -117,7 +112,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 fontSize: 16,
                 fontStyle: FontStyle.italic,
                 fontWeight: FontWeight.w500,
-                color: const Color.fromARGB(255, 190, 36, 25),
+                color: Color.fromARGB(255, 112, 14, 14),
                 height: 1.5,
               ),
             ),
@@ -163,11 +158,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 );
               },
               icon: Icon(Icons.login_outlined,
-                  color: const Color.fromARGB(255, 190, 36, 25), size: 26),
+                  color: Color.fromARGB(255, 112, 14, 14), size: 26),
               label: Text(
                 "Login",
                 style: TextStyle(
-                  color: const Color.fromARGB(255, 190, 36, 25),
+                  color: Color.fromARGB(255, 112, 14, 14),
                   fontWeight: FontWeight.bold,
                   fontSize: 26,
                 ),

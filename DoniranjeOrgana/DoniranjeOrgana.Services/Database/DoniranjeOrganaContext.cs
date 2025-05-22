@@ -80,13 +80,15 @@ namespace DoniranjeOrgana.Services.Database
 
                 entity.Property(e => e.DatumPrijave).HasColumnType("datetime");
 
-                entity.Property(e => e.NacinSaglasnosti).HasMaxLength(100);
+               // entity.Property(e => e.NacinSaglasnosti).HasMaxLength(100);
 
                 entity.Property(e => e.Napomena).HasMaxLength(250);
 
                 entity.Property(e => e.OrganiZaDonaciju).HasMaxLength(250);
+               // entity.Property(e => e.Potpis).HasMaxLength(250);
 
-                entity.Property(e => e.StatusPrijave).HasMaxLength(150);
+
+                // entity.Property(e => e.StatusPrijave).HasMaxLength(150);
 
                 entity.HasOne(d => d.Pacijent)
                     .WithMany(p => p.DonorskiFormulas)

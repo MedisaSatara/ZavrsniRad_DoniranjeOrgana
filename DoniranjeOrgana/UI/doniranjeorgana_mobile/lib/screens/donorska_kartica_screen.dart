@@ -1,6 +1,7 @@
+import 'package:doniranjeorgana_mobile/widgets/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:signature/signature.dart';
+import 'package:intl/intl.dart';
 import '../models/pacijent.dart';
 
 class DonorskaKarticaScreen extends StatelessWidget {
@@ -10,12 +11,9 @@ class DonorskaKarticaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Donorska kartica'),
-        backgroundColor: const Color.fromARGB(255, 190, 36, 25),
-      ),
-      body: Center(
+    return MasterScreenWidget(
+      title: 'Donor card',
+      child: Center(
         child: Card(
           elevation: 8,
           margin: EdgeInsets.all(24),
@@ -38,7 +36,7 @@ class DonorskaKarticaScreen extends StatelessWidget {
                 Icon(Icons.favorite, size: 48, color: Colors.white),
                 SizedBox(height: 16),
                 Text(
-                  'Donorska kartica',
+                  'Donor card',
                   style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -57,12 +55,12 @@ class DonorskaKarticaScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Datum rođenja: ${pacijent.datumRodjenja?.toString().split(" ").first ?? "N/A"}',
+                  'Birth date: ${pacijent.datumRodjenja != null ? DateFormat('dd.MM.yyyy').format(DateFormat('d. M. yyyy. HH:mm:ss').parse(pacijent.datumRodjenja!)) : "N/A"}',
                   style: GoogleFonts.poppins(color: Colors.white),
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Zahvaljujemo što ste donor!',
+                  'Thank you for being a donor!',
                   style: GoogleFonts.poppins(
                       fontStyle: FontStyle.italic, color: Colors.white70),
                 ),

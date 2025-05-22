@@ -1,4 +1,6 @@
 import 'package:doniranjeorgana_mobile/screens/korisnik_screen.dart';
+import 'package:doniranjeorgana_mobile/screens/welcome_screen.dart';
+import 'package:doniranjeorgana_mobile/utils/util.dart';
 import 'package:flutter/material.dart';
 
 class MasterScreenWidget extends StatefulWidget {
@@ -14,6 +16,8 @@ class MasterScreenWidget extends StatefulWidget {
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   int _selectedIndex = 0;
+  final GlobalKey _menuKey = GlobalKey();
+
 
   final List<Widget> _mainScreens = [
     HomeScreen(),
@@ -48,39 +52,41 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   widget.title ?? "",
                   style: const TextStyle(
                     color: Color.fromARGB(255, 112, 14, 14),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
             actions: [
               IconButton(
+                key: _menuKey,
                 icon: const Icon(Icons.menu),
                 color: Colors.white,
                 onPressed: () async {
                   final RenderBox button =
-                      context.findRenderObject() as RenderBox;
+                      _menuKey.currentContext!.findRenderObject() as RenderBox;
                   final RenderBox overlay = Overlay.of(context)
                       .context
                       .findRenderObject() as RenderBox;
 
-                  final RelativeRect position = RelativeRect.fromRect(
-                    Rect.fromPoints(
-                      button.localToGlobal(Offset.zero, ancestor: overlay),
-                      button.localToGlobal(button.size.bottomRight(Offset.zero),
-                          ancestor: overlay),
-                    ),
-                    Offset.zero & overlay.size,
+                  final Offset position =
+                      button.localToGlobal(Offset.zero, ancestor: overlay);
+                  final RelativeRect rect = RelativeRect.fromLTRB(
+                    position.dx,
+                    position.dy + button.size.height,
+                    position.dx + button.size.width,
+                    0,
                   );
 
                   final selected = await showMenu<String>(
                     context: context,
-                    position: position,
-                    items: [
-                      const PopupMenuItem<String>(
+                    position: rect,
+                    items: const [
+                      PopupMenuItem<String>(
                         value: 'settings',
                         child: Text('Settings'),
                       ),
-                      const PopupMenuItem<String>(
+                      PopupMenuItem<String>(
                         value: 'logout',
-                        child: Text('Odjavi se'),
+                        child: Text('Logout'),
                       ),
                     ],
                   );
@@ -88,7 +94,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   if (selected == 'settings') {
                     print('Otvoriti Settings');
                   } else if (selected == 'logout') {
-                    print('Odjavi se kliknuto');
+                    _logout();
                   }
                 },
               ),
@@ -96,10 +102,10 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
           ),
           body: widget.child ?? _mainScreens[_selectedIndex],
           bottomNavigationBar: SizedBox(
-            height: 50, 
+            height: 50,
             width: double.infinity,
             child: Stack(
-              clipBehavior: Clip.none, 
+              clipBehavior: Clip.none,
               children: [
                 Positioned(
                   bottom: 0,
@@ -123,15 +129,17 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   ),
                 ),
                 Positioned(
-                  bottom: 15, 
+                  bottom: 15,
                   left: 0,
                   right: 0,
                   child: Center(
                     child: GestureDetector(
                       onTap: () {
-                        setState(() {
-                          _selectedIndex = 0;
-                        });
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        );
                       },
                       child: Container(
                         width: 70,
@@ -160,6 +168,14 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
           ),
         ),
       ],
+    );
+  }
+
+  void _logout() {
+    Authorization.korisnik = null;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => WelcomeScreen()),
+      (route) => false,
     );
   }
 }

@@ -1,13 +1,17 @@
 import 'dart:ui';
 
+import 'package:doniranjeorgana_mobile/models/donorski_formular.dart';
 import 'package:doniranjeorgana_mobile/models/korisnik.dart';
 import 'package:doniranjeorgana_mobile/models/pacijent.dart';
+import 'package:doniranjeorgana_mobile/providers/donorski_formular_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/korisnik_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/pacijent_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/uloga_provider.dart';
 import 'package:doniranjeorgana_mobile/screens/donorska_kartica_screen.dart';
 import 'package:doniranjeorgana_mobile/screens/donorski_formular_screen.dart';
 import 'package:doniranjeorgana_mobile/screens/pacijent_screen.dart';
+import 'package:doniranjeorgana_mobile/screens/welcome_screen.dart';
+import 'package:doniranjeorgana_mobile/utils/util.dart';
 import 'package:doniranjeorgana_mobile/widgets/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   late KorisnikProvider _korisnikProvider;
   late PacijentProvider _pacijentProvider;
   late UlogaProvider _ulogaProvider;
+  late DonorskiFormularProvider _donorskiFormularProvider;
   List<Korisnik>? korisnikResult;
   Pacijent? pacijentData;
+  DonorskiFormular? ispunjenFormular;
 
   @override
   void didChangeDependencies() {
@@ -32,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _korisnikProvider = context.read<KorisnikProvider>();
     _ulogaProvider = context.read<UlogaProvider>();
     _pacijentProvider = context.read<PacijentProvider>();
+    _donorskiFormularProvider = context.read<DonorskiFormularProvider>();
     _fetchKorisnici();
   }
 
@@ -79,6 +86,13 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw 'Could not launch $url';
     }
+  }
+  void _logout() {
+    Authorization.korisnik = null;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => WelcomeScreen()),
+      (route) => false,
+    );
   }
 
   @override
@@ -231,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: _launchURL,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color.fromARGB(255, 181, 144, 142),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(

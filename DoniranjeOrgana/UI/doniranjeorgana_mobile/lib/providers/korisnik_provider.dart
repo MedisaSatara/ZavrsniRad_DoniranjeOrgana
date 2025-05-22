@@ -53,35 +53,6 @@ class KorisnikProvider extends BaseProvider<Korisnik> {
     }
   }
 
-  Future<bool> promeniLozinku(
-      int korisnikId, String staraLozinka, String novaLozinka) async {
-    var url = "$totalUrl/promeni-lozinku";
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: createHeaders(),
-        body: json.encode({
-          'korisnikId': korisnikId,
-          'staraLozinka': staraLozinka,
-          'novaLozinka': novaLozinka,
-        }),
-      );
-
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        throw Exception('Failed to change password');
-      }
-    } catch (e) {
-      print('Error: $e');
-      throw Exception('Failed to change password');
-    }
-  }
-
   Future<String?> registruj({
     required String ime,
     required String prezime,
