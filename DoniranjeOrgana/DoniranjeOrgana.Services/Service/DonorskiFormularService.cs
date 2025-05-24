@@ -25,7 +25,7 @@ namespace DoniranjeOrgana.Services.Service
 
             if (!string.IsNullOrWhiteSpace(search?.ImeKorisnika))
             {
-                filteredQuery = filteredQuery.Where(x => x.Pacijent.Ime.Contains(search.ImeKorisnika.ToLower()));
+                filteredQuery = filteredQuery.Where(x => x.Donori.Ime.Contains(search.ImeKorisnika.ToLower()));
             }
             return filteredQuery;
         }

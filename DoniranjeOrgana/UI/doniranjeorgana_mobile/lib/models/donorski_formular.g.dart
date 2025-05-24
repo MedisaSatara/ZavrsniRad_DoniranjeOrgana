@@ -20,7 +20,7 @@ DonorskiFormular _$DonorskiFormularFromJson(Map<String, dynamic> json) =>
       json['datumAzuriranja'] == null
           ? null
           : DateTime.parse(json['datumAzuriranja'] as String),
-      (json['pacijentId'] as num?)?.toInt(),
+      (json['donoriId'] as num?)?.toInt(),
       json['potpis'] as String?,
     );
 
@@ -34,6 +34,6 @@ Map<String, dynamic> _$DonorskiFormularToJson(DonorskiFormular instance) =>
      // 'statusPrijave': instance.statusPrijave,
       'napomena': instance.napomena,
       'datumAzuriranja': instance.datumAzuriranja?.toIso8601String(),
-      'pacijentId': instance.pacijentId,
+      'pacijentId': instance.donoriId,
       'potpis': instance.potpis,
     };

@@ -431,6 +431,34 @@ namespace DoniranjeOrgana.Services.Database
                 });
             #endregion
 
+            #region DodavanjePacijenta
+
+            modelBuilder.Entity<Donori>().HasData(
+                new Donori()
+                {
+                    DonorId = 5501,
+                    Ime = "Medisa",
+                    Prezime = "Satara",
+                    Spol = "Z",
+                    DatumRodjenja = new DateTime(1998, 05, 07),
+                    Telefon = "061 201 022",
+                    MjestoRodjenja = "Mostar",
+                    Jmbg = "1211998796541",
+                    Prebivaliste = "Stolac",
+                    //Email = "josip@gmail.com",
+                    KrvnaGrupa = "AB",
+                    RhFaktor = "+",
+                    HronicneBolesti = "Nema",
+                    Alergija = "Voltaren",
+                    KorisnickoIme = "donor1",
+                    KorisnikId = 1002
+                    /* LozinkaSalt = Salt[0],
+                     LozinkaHash = PacijentService.GenerateHash(Salt[0], "pacijent05"),
+                     KorisnikId = 1002*/
+                }
+                );
+            #endregion
+
 
             #region Dodavanje Osiguranja Pacijenta
             modelBuilder.Entity<PacijentOsiguranje>().HasData(

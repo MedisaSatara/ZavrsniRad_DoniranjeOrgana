@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:doniranjeorgana_mobile/models/donori.dart';
 import 'package:doniranjeorgana_mobile/models/donorski_formular.dart';
 import 'package:doniranjeorgana_mobile/models/korisnik.dart';
 import 'package:doniranjeorgana_mobile/models/pacijent.dart';
+import 'package:doniranjeorgana_mobile/providers/donori_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/donorski_formular_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/korisnik_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/pacijent_provider.dart';
@@ -25,11 +27,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late KorisnikProvider _korisnikProvider;
-  late PacijentProvider _pacijentProvider;
+  late DonoriProvider _donoriProvider;
   late UlogaProvider _ulogaProvider;
   late DonorskiFormularProvider _donorskiFormularProvider;
   List<Korisnik>? korisnikResult;
-  Pacijent? pacijentData;
+  Donori? donorData;
   DonorskiFormular? ispunjenFormular;
 
   @override
@@ -37,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.didChangeDependencies();
     _korisnikProvider = context.read<KorisnikProvider>();
     _ulogaProvider = context.read<UlogaProvider>();
-    _pacijentProvider = context.read<PacijentProvider>();
+    _donoriProvider = context.read<DonoriProvider>();
     _donorskiFormularProvider = context.read<DonorskiFormularProvider>();
     _fetchKorisnici();
   }
@@ -46,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _korisnikProvider = Provider.of<KorisnikProvider>(context, listen: false);
-    _pacijentProvider = Provider.of<PacijentProvider>(context, listen: false);
+    _donoriProvider = Provider.of<DonoriProvider>(context, listen: false);
     _fetchKorisnici();
   }
 
@@ -63,15 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (filtered.isNotEmpty) {
         var korisnikId = filtered.first.korisnikId;
-        var pacijentiData = await _pacijentProvider.get();
+        var donoriData = await _donoriProvider.get();
 
-        var matchedPacijent = pacijentiData.result.firstWhere(
+        var matchedDonori = donoriData.result.firstWhere(
           (p) => p.korisnikId == korisnikId,
         );
 
-        if (matchedPacijent != null) {
+        if (matchedDonori != null) {
           setState(() {
-            pacijentData = matchedPacijent;
+            donorData = matchedDonori;
           });
         }
       }
@@ -183,11 +185,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.person,
                 label: 'My data',
                 onTap: () {
-                  if (pacijentData != null) {
+                  if (donorData != null) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) =>
-                            PacijentPodaciScreen(pacijent: pacijentData!),
+                            PacijentPodaciScreen(donori: donorData!),
                       ),
                     );
                   } else {
@@ -202,12 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.favorite,
                 label: 'Become a donor',
                 onTap: () {
-                  if (pacijentData != null) {
+                  if (donorData != null) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => DonorskiFormularScreen(
                           korisnikIme:
-                              '${pacijentData?.ime} ${pacijentData?.prezime}',
+                              '${donorData?.ime} ${donorData?.prezime}',
                         ),
                       ),
                     );
@@ -218,11 +220,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.info,
                 label: 'Donor card',
                 onTap: () {
-                  if (pacijentData != null) {
+                  if (donorData != null) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) =>
-                            DonorskaKarticaScreen(pacijent: pacijentData!),
+                            DonorskaKarticaScreen(donori: donorData!),
                       ),
                     );
                   } else {

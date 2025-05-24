@@ -21,7 +21,7 @@ class DonorskiFormular {
      // this.statusPrijave,
       this.napomena,
       this.datumAzuriranja,
-      this.pacijentId,
+      this.donoriId,
       this.potpis,
       );
 
@@ -33,7 +33,7 @@ class DonorskiFormular {
   //String? statusPrijave;
   String? napomena;
   DateTime? datumAzuriranja;
-  int? pacijentId;
+  int? donoriId;
   String? potpis;
 
   Uint8List? get potpisBytes => potpis == null ? null : base64Decode(potpis!);

@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:doniranjeorgana_mobile/models/donori.dart';
 import 'package:doniranjeorgana_mobile/models/donorski_formular.dart';
-import 'package:doniranjeorgana_mobile/models/pacijent.dart';
+import 'package:doniranjeorgana_mobile/providers/donori_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/donorski_formular_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/korisnik_provider.dart';
-import 'package:doniranjeorgana_mobile/providers/pacijent_provider.dart';
 import 'package:doniranjeorgana_mobile/widgets/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -15,10 +15,10 @@ import 'package:signature/signature.dart';
 class DonorskiFormularScreen extends StatefulWidget {
   final Function? onDataChanged;
   final String? korisnikIme;
-  Pacijent? pacijent;
+  Donori? donor;
 
   DonorskiFormularScreen(
-      {Key? key, this.onDataChanged, this.korisnikIme, this.pacijent})
+      {Key? key, this.onDataChanged, this.korisnikIme, this.donor})
       : super(key: key);
 
   @override
@@ -28,11 +28,11 @@ class DonorskiFormularScreen extends StatefulWidget {
 class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   late DonorskiFormularProvider _donorskiFormularProvider;
-  late PacijentProvider _pacijentProvider;
+  late DonoriProvider _donoriProvider;
   late KorisnikProvider _korisnikProvider;
 
-  List<Pacijent>? _pacijenti;
-  Pacijent? _selectedPacijentId;
+  List<Donori>? _donori;
+  Donori? _selectedDonoriId;
   DonorskiFormular? _prethodnoPopunjen;
 
   final controller = SignatureController(
@@ -56,26 +56,26 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _donorskiFormularProvider = context.read<DonorskiFormularProvider>();
-    _pacijentProvider = context.read<PacijentProvider>();
+    _donoriProvider = context.read<DonoriProvider>();
     _korisnikProvider = context.read<KorisnikProvider>();
 
-    _fetchPatients();
+    _fetchDonori();
   }
 
-  Future<void> _fetchPatients() async {
+  Future<void> _fetchDonori() async {
     try {
-      var pacijentiData = await _pacijentProvider.get();
+      var donoriData = await _donoriProvider.get();
       setState(() {
-        _pacijenti = pacijentiData.result;
+        _donori = donoriData.result;
 
         if (widget.korisnikIme != null) {
-          _selectedPacijentId = _pacijenti?.firstWhere(
+          _selectedDonoriId = _donori?.firstWhere(
             (p) => "${p.ime} ${p.prezime}" == widget.korisnikIme,
           );
         }
       });
     } catch (e) {
-      print('Error fetching patients: $e');
+      print('Error fetching donori: $e');
     }
   }
 
@@ -94,8 +94,8 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
       final formData = _formKey.currentState!.value;
       final mutableFormData = Map<String, dynamic>.from(formData);
 
-      if (_selectedPacijentId != null) {
-        mutableFormData['pacijentId'] = _selectedPacijentId!.pacijentId;
+      if (_selectedDonoriId != null) {
+        mutableFormData['donoriId'] = _selectedDonoriId!.donorId!;
       }
 
       if (mutableFormData.containsKey('saglasnost')) {
@@ -296,9 +296,9 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
           SizedBox(
             height: 20,
           ),
-          if (_selectedPacijentId != null)
+          if (_selectedDonoriId != null)
             Text(
-              'Patient: ${_selectedPacijentId!.ime} ${_selectedPacijentId!.prezime}',
+              'Donor: ${_selectedDonoriId!.ime} ${_selectedDonoriId!.prezime}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           SizedBox(height: 30),

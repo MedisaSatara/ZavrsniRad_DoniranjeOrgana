@@ -1,4 +1,5 @@
 import 'package:doniranjeorgana_mobile/providers/doktor_provider.dart';
+import 'package:doniranjeorgana_mobile/providers/donori_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/donorski_formular_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/korisnik_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/korisnik_uloga_provider.dart';
@@ -30,6 +31,8 @@ void main() async {
       ChangeNotifierProvider(create: (_) => KorisnikUlogaProvider()),
       ChangeNotifierProvider(create: (_) => TerapijaProvider()),
       ChangeNotifierProvider(create: (_) => NalazProvider()),
+      ChangeNotifierProvider(create: (_) => DonoriProvider()),
+
       ChangeNotifierProvider(create: (_) => DonorskiFormularProvider()),
     ],
     child: MyApp(),

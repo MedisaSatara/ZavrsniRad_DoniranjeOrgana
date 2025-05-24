@@ -1,3 +1,4 @@
+import 'package:doniranjeorgana_mobile/models/donori.dart';
 import 'package:doniranjeorgana_mobile/widgets/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,9 +6,9 @@ import 'package:intl/intl.dart';
 import '../models/pacijent.dart';
 
 class DonorskaKarticaScreen extends StatelessWidget {
-  final Pacijent pacijent;
+  final Donori donori;
 
-  DonorskaKarticaScreen({required this.pacijent});
+  DonorskaKarticaScreen({required this.donori});
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +46,17 @@ class DonorskaKarticaScreen extends StatelessWidget {
                 ),
                 Divider(color: Colors.white54, height: 32),
                 Text(
-                  '${pacijent.ime} ${pacijent.prezime}',
+                  '${donori.ime} ${donori.prezime}',
                   style: GoogleFonts.poppins(fontSize: 20, color: Colors.white),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'JMBG: ${pacijent.jmbg ?? "N/A"}',
+                  'JMBG: ${donori.jmbg ?? "N/A"}',
                   style: GoogleFonts.poppins(color: Colors.white),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Birth date: ${pacijent.datumRodjenja != null ? DateFormat('dd.MM.yyyy').format(DateFormat('d. M. yyyy. HH:mm:ss').parse(pacijent.datumRodjenja!)) : "N/A"}',
+                  'Birth date: ${donori.datumRodjenja != null ? DateFormat('dd.MM.yyyy').format(DateTime.parse(donori.datumRodjenja!)) : "N/A"}',
                   style: GoogleFonts.poppins(color: Colors.white),
                 ),
                 SizedBox(height: 16),

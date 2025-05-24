@@ -73,6 +73,11 @@ namespace DoniranjeOrgana.Services.Mapping
             CreateMap<DonorskiFormularInsertRequest, Database.DonorskiFormula>();
             CreateMap<DonorskiFormularUpdateRequest, Database.DonorskiFormula>();
 
+            CreateMap<Database.Donori, Models.Model.Donori>();
+            CreateMap<DonoriSearchObject, Database.Donori>();
+            CreateMap<DonoriInsertRequest, Database.Donori>();
+            CreateMap<DonoriUpdateRequest, Database.Donori>();
+
 
         }
     }

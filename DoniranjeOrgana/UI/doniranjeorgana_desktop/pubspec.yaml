@@ -43,6 +43,10 @@ dependencies:
   path_provider: ^2.0.2
   pdf: ^3.10.0
   google_fonts: ^5.0.0
+  shared_preferences: ^2.0.15
+  uuid: ^4.5.1
+  smooth_page_indicator: ^1.1.0
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   json_serializable: ^6.7.0
@@ -69,8 +73,17 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/images/images.jpg
+    - assets/images/Organ4Life.jpg
+    - assets/images/logo.jpg
+    - assets/images/Organ4Life.jpg
+    - assets/images/about.jpg
+    - assets/images/about1.jpg
+    - assets/images/about2.jpg
+    - assets/images/about3.jpg
+    - assets/images/loginpage.jpg
+    - assets/images/organdonor.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

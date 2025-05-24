@@ -1,3 +1,6 @@
+import 'package:doniranjeorgana_desktop/models/korisnik.dart';
+import 'package:doniranjeorgana_desktop/models/search_result.dart';
+import 'package:doniranjeorgana_desktop/providers/korisnik_provider.dart';
 import 'package:doniranjeorgana_desktop/widget/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,14 +11,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-//  late KorisnikProvider _korisnikProvider;
- // SearchResult<Korisnik>? _korisnici;
+  late KorisnikProvider _korisnikProvider;
+
+  int? _brojKorisnika;
+  SearchResult<Korisnik>? _korisnici;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-//    _korisnikProvider = context.read<KorisnikProvider>();
+    _korisnikProvider = context.read<KorisnikProvider>();
 
+    _fetchKorisnici();
+  }
+
+  Future<void> _fetchKorisnici() async {
+    try {
+      var korisniciData = await _korisnikProvider.get();
+      setState(() {
+        _korisnici = korisniciData;
+        _brojKorisnika = korisniciData.count;
+      });
+    } catch (e) {
+      print("Error fetching users: $e");
+    }
   }
 
   @override
@@ -29,21 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Positioned.fill(
               child: Image.asset(
-                "assets/images/welcome.jpg",
-                fit: BoxFit.cover,
+                "assets/images/images.jpg",
+                fit: BoxFit.contain,
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: _buildCardsSection(),
-                  ),
-                ),
-                SizedBox(height: 16),
-              ],
+            Center(
+              child: SingleChildScrollView(
+                child: _buildCardsSection(),
+              ),
             ),
           ],
         ),
@@ -52,28 +63,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCardsSection() {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildWelcomeCard(),
-        SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+        Expanded(flex: 1, child: _buildWelcomeCard()),
+        Expanded(
+            child: Column(
           children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  _buildBrojKorisnikaCard(),
-                  SizedBox(height: 16),
-                  _buildTotalRegistratedUserCard(),
-                ],
-              ),
+            _buildBrojKorisnikaCard(),
+            SizedBox(
+              height: 16,
             ),
-            SizedBox(width: 56),
-            
+            _buildTotalRegistratedUserCard(),
           ],
-        ),
+        ))
       ],
     );
   }
@@ -81,39 +84,46 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildWelcomeCard() {
     return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.6,
+        width: MediaQuery.of(context).size.width * 0.3,
+        height: 400,
         child: Card(
           color: Colors.white.withOpacity(0.8),
           elevation: 4,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome to the eKarton Admin Home Page!',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16)),
+                child: Container(
+                  color: Colors.red,
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'ABOUT US',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red[900],
+                    ),
+                  ),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'This is the central hub for managing the eKarton system. From here, you can access various sections like users, patients, doctors, and departments.',
-                  style: TextStyle(fontSize: 16),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 8,
+                    ),
+                  ],
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'You have full control over all aspects of the eKarton platform. With just a few clicks, you can easily navigate to different sections, update information, and ensure the system is functioning smoothly.',
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Feel free to explore and make the most of the features available in the admin panel. Everything you need is right here at your fingertips.',
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 8),
-              ],
-            ),
+              )
+            ],
           ),
         ),
       ),
@@ -141,7 +151,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 8.0,
                 ),
-                
+                Text(
+                  '$_brojKorisnika',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                ),
               ],
             ),
           ),
@@ -154,29 +167,48 @@ class _HomeScreenState extends State<HomeScreen> {
     return Center(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.2,
+        height: 250,
         child: Card(
           color: Colors.white.withOpacity(0.8),
           elevation: 4,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Number of App Users:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16)),
+                child: Container(
+                  color: Colors.red,
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'BLOOD DONATION',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red[900],
+                    ),
+                  ),
                 ),
-                SizedBox(height: 8),
-                
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 8,
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       ),
     );
   }
-
- 
 }

@@ -90,10 +90,10 @@ namespace DoniranjeOrgana.Services.Database
 
                 // entity.Property(e => e.StatusPrijave).HasMaxLength(150);
 
-                entity.HasOne(d => d.Pacijent)
+                entity.HasOne(d => d.Donori)
                     .WithMany(p => p.DonorskiFormulas)
-                    .HasForeignKey(d => d.PacijentId)
-                    .HasConstraintName("FK_Pacijent_DonorskiFormular");
+                    .HasForeignKey(d => d.DonorId)
+                    .HasConstraintName("FK_Donori_DonorskiFormular");
             });
 
             modelBuilder.Entity<Korisnik>(entity =>
@@ -267,6 +267,48 @@ namespace DoniranjeOrgana.Services.Database
                 entity.Property(e => e.Naziv).HasMaxLength(50);
 
                 entity.Property(e => e.OpisUloge).HasMaxLength(250);
+            });
+            modelBuilder.Entity<Donori>().HasKey(z => z.DonorId);
+            modelBuilder.Entity<Donori>(entity =>
+            {
+                entity.ToTable("Donori");
+
+                entity.Property(e => e.Alergija).HasMaxLength(250);
+
+                entity.Property(e => e.DatumRodjenja).HasMaxLength(10);
+
+                entity.Property(e => e.HronicneBolesti).HasMaxLength(250);
+
+                entity.Property(e => e.Ime).HasMaxLength(30);
+
+                entity.Property(e => e.Jmbg)
+                    .HasMaxLength(13)
+                    .HasColumnName("JMBG");
+
+                entity.Property(e => e.KorisnickoIme).HasMaxLength(20);
+
+                entity.Property(e => e.KrvnaGrupa).HasMaxLength(10);
+
+                entity.Property(e => e.LozinkaHash).HasMaxLength(50);
+
+                entity.Property(e => e.LozinkaSalt).HasMaxLength(50);
+
+                entity.Property(e => e.MjestoRodjenja).HasMaxLength(50);
+
+                entity.Property(e => e.Prebivaliste).HasMaxLength(50);
+
+                entity.Property(e => e.Prezime).HasMaxLength(30);
+
+                entity.Property(e => e.RhFaktor).HasMaxLength(20);
+
+                entity.Property(e => e.Spol).HasMaxLength(1);
+
+                entity.Property(e => e.Telefon).HasMaxLength(20);
+
+                entity.HasOne(d => d.Korisnik)
+                    .WithMany(p => p.Donoris)
+                    .HasForeignKey(d => d.KorisnikId)
+                    .HasConstraintName("FK_Korisnik_Donori");
             });
 
             OnModelCreatingPartial(modelBuilder);

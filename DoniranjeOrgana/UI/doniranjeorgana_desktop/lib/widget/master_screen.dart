@@ -1,4 +1,7 @@
+import 'package:doniranjeorgana_desktop/screens/donor_register_screen.dart';
 import 'package:doniranjeorgana_desktop/screens/home_screen.dart';
+import 'package:doniranjeorgana_desktop/screens/korisnici_screen.dart';
+import 'package:doniranjeorgana_desktop/screens/patient_register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,29 +17,73 @@ class MasterScreenWidget extends StatefulWidget {
 }
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 63, 125, 137),
-        automaticallyImplyLeading: false,
-        title: widget.title_widget ??
-            Text(
-              widget.title ?? "",
-              style: TextStyle(
-                color: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100),
+        child: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          flexibleSpace: SafeArea(
+              child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/Organ4Life.jpg',
+                          height: 30,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          "Organ4Life",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: const [
+                        Text(
+                          "Admin",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(Icons.account_circle,
+                            color: Colors.black87, size: 28),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-        actions: [
-          _buildNavBarItems(context),
-        ],
+              Container(
+                height: 40,
+                alignment: Alignment.center,
+                child: _buildNavBarItems(context),
+              ),
+            ],
+          )),
+        ),
       ),
       body: Column(
         children: [
@@ -46,20 +93,14 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     );
   }
 
-
   Widget _buildNavBarItems(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _buildNavText(context, "Home", HomeScreen()),
-        _buildNavText(context, "Users", HomeScreen()),
-        _buildNavText(context, "Patients", HomeScreen()),
-        _buildNavText(context, "Doctors", HomeScreen()),
-        _buildNavText(context, "Department", HomeScreen()),
-        // _buildNavText(context, "Insurance", OsiguranjeScreen()),
-        _buildNavText(context, "Patient Insurance", HomeScreen()),
-        _buildNavText(context, "Reports", HomeScreen()),
-        _buildNavText(context, "Profile", HomeScreen()),
+        _buildNavText(context, "Donor register", DonorRegisterScreen()),
+        _buildNavText(context, "Patient register", PatientRegisterScreen()),
+        _buildNavText(context, "Users", UsersScreens()),
       ],
     );
   }
@@ -86,7 +127,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
           child: Text(
             title,
             style: TextStyle(
-              color: Colors.white,
+              color: const Color.fromARGB(255, 0, 0, 0),
               fontWeight: FontWeight.bold,
               fontSize: 16.0,
               decoration: TextDecoration.none,

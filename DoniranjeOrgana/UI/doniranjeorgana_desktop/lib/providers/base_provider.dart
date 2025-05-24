@@ -12,11 +12,9 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   BaseProvider(String endpoint) : _endpoint = endpoint {
     _baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "http://localhost:7073/");
+        defaultValue: "https://localhost:7040/");
     totalUrl = "$_baseUrl$_endpoint";
   }
-  //https://localhost:7285/
-  //http://localhost:7073/
   Future<SearchResult<T>> get({dynamic filter}) async {
     var url = "$_baseUrl$_endpoint";
 
@@ -190,8 +188,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   Future<bool> checkOldPassword(int korisnikId, String oldPassword) async {
     final url = totalUrl ?? "$_baseUrl$_endpoint";
-
-    // final url = Uri.parse('https://localhost:7285/Korisnik/provjeriLozinku');
 
     final response = await http.post(
       Uri.parse(url),

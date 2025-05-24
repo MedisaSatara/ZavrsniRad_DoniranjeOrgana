@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:doniranjeorgana_mobile/models/donori.dart';
 import 'package:doniranjeorgana_mobile/models/korisnik.dart';
 import 'package:doniranjeorgana_mobile/providers/korisnik_provider.dart';
 import 'package:doniranjeorgana_mobile/widgets/master_screen.dart';
@@ -8,9 +9,9 @@ import 'package:doniranjeorgana_mobile/models/pacijent.dart';
 import 'package:provider/provider.dart';
 
 class PacijentPodaciScreen extends StatefulWidget {
-  final Pacijent pacijent;
+  final Donori donori;
 
-  PacijentPodaciScreen({Key? key, required this.pacijent}) : super(key: key);
+  PacijentPodaciScreen({Key? key, required this.donori}) : super(key: key);
 
   @override
   _PacijentPodaciScreenState createState() => _PacijentPodaciScreenState();
@@ -98,7 +99,7 @@ class _PacijentPodaciScreenState extends State<PacijentPodaciScreen> {
   @override
   @override
   Widget build(BuildContext context) {
-    final p = widget.pacijent;
+    final p = widget.donori;
     final korisnik = korisnikResult?.first;
 
     return MasterScreenWidget(
