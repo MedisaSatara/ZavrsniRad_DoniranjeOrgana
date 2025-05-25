@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:doniranjeorgana_mobile/models/donorski_formular.dart';
 import 'package:doniranjeorgana_mobile/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:doniranjeorgana_mobile/models/search_result.dart';
@@ -163,17 +164,46 @@ abstract class BaseProvider<T> with ChangeNotifier {
     };
   }
 
-  Future<T> getById(int? id) async {
+  Future<T?> getById(int? id) async {
     var url = "$_baseUrl$_endpoint/$id";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
     Response response = await http.get(uri, headers: headers);
     if (isValidResponse(response)) {
-      var data = jsonDecode(response.body);
-      return fromJson(data);
+      if (response.body.isNotEmpty) {
+        var data = jsonDecode(response.body);
+        return fromJson(data);
+      } else {
+        return null;
+      }
     } else {
       throw Exception("Unknown error");
     }
   }
+
+  Future<DonorskiFormular?> getByDonorId(int donorId) async {
+  var url = "$_baseUrl$_endpoint?donorId=$donorId";
+  var uri = Uri.parse(url);
+  var headers = createHeaders();
+
+  try {
+    var response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+
+      if (data is List && data.isNotEmpty) {
+        return DonorskiFormular.fromJson(data[0]);
+      }
+    }
+
+    return null;
+  } catch (e) {
+    print("Error during getByDonorId: $e");
+    rethrow;
+  }
+}
+
+
 }

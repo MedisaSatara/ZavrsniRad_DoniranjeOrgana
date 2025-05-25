@@ -29,6 +29,8 @@ namespace DoniranjeOrgana.Services.Database
         public virtual DbSet<Specijalizacija> Specijalizacijas { get; set; } = null!;
         public virtual DbSet<Terapija> Terapijas { get; set; } = null!;
         public virtual DbSet<Uloga> Ulogas { get; set; } = null!;
+        public virtual DbSet<Donori> Donoris { get; set; } = null!;
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -275,17 +277,17 @@ namespace DoniranjeOrgana.Services.Database
 
                 entity.Property(e => e.Alergija).HasMaxLength(250);
 
-                entity.Property(e => e.DatumRodjenja).HasMaxLength(10);
+               // entity.Property(e => e.DatumRodjenja).HasMaxLength(10);
 
                 entity.Property(e => e.HronicneBolesti).HasMaxLength(250);
 
-                entity.Property(e => e.Ime).HasMaxLength(30);
+               // entity.Property(e => e.Ime).HasMaxLength(30);
 
                 entity.Property(e => e.Jmbg)
                     .HasMaxLength(13)
                     .HasColumnName("JMBG");
 
-                entity.Property(e => e.KorisnickoIme).HasMaxLength(20);
+             //   entity.Property(e => e.KorisnickoIme).HasMaxLength(20);
 
                 entity.Property(e => e.KrvnaGrupa).HasMaxLength(10);
 
@@ -297,11 +299,11 @@ namespace DoniranjeOrgana.Services.Database
 
                 entity.Property(e => e.Prebivaliste).HasMaxLength(50);
 
-                entity.Property(e => e.Prezime).HasMaxLength(30);
+              //  entity.Property(e => e.Prezime).HasMaxLength(30);
 
                 entity.Property(e => e.RhFaktor).HasMaxLength(20);
 
-                entity.Property(e => e.Spol).HasMaxLength(1);
+             //   entity.Property(e => e.Spol).HasMaxLength(1);
 
                 entity.Property(e => e.Telefon).HasMaxLength(20);
 

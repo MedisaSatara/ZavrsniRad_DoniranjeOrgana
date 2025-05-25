@@ -89,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
       throw 'Could not launch $url';
     }
   }
+
   void _logout() {
     Authorization.korisnik = null;
     Navigator.of(context).pushAndRemoveUntil(
@@ -185,11 +186,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.person,
                 label: 'My data',
                 onTap: () {
-                  if (donorData != null) {
+                  if (donorData != null && korisnik!=null ) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) =>
-                            PacijentPodaciScreen(donori: donorData!),
+                            PacijentPodaciScreen(donori: donorData!, korisnik: korisnik,),
                       ),
                     );
                   } else {
@@ -203,14 +204,53 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildIconButton(
                 icon: Icons.favorite,
                 label: 'Become a donor',
-                onTap: () {
-                  if (donorData != null) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => DonorskiFormularScreen(
-                          korisnikIme:
-                              '${donorData?.ime} ${donorData?.prezime}',
+                onTap: () async {
+                  try {
+                    final donoriList = await _donoriProvider.get(filter: {
+                      'korisnikId': korisnikResult!.first.korisnikId,
+                    });
+
+                    if (donoriList.result.isNotEmpty) {
+                      Donori donor = donoriList.result.first;
+
+                      final formularList =
+                          await _donorskiFormularProvider.get(filter: {
+                        'donoriId': donor.donorId,
+                      });
+
+                      DonorskiFormular? existingFormular;
+                      if (formularList.result.isNotEmpty) {
+                        existingFormular = formularList.result.first;
+                      }
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DonorskiFormularScreen(
+                            korisnikIme: '${donor.ime} ${donor.prezime}',
+                            donor: donor,
+                            korisnikData: korisnikResult!.first,
+                            existingFormular: existingFormular,
+                          ),
                         ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DonorskiFormularScreen(
+                            korisnikIme:
+                                '${korisnikResult!.first.ime} ${korisnikResult!.first.prezime}',
+                            korisnikData: korisnikResult!.first,
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    print('Greška: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Greška prilikom učitavanja donora.'),
                       ),
                     );
                   }
@@ -219,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildIconButton(
                 icon: Icons.info,
                 label: 'Donor card',
-                onTap: () {
+                onTap: () async {
                   if (donorData != null) {
                     Navigator.of(context).push(
                       MaterialPageRoute(

@@ -1,6 +1,7 @@
 import 'package:doniranjeorgana_desktop/models/korisnik.dart';
 import 'package:doniranjeorgana_desktop/models/search_result.dart';
 import 'package:doniranjeorgana_desktop/providers/korisnik_provider.dart';
+import 'package:doniranjeorgana_desktop/screens/mail_screen.dart';
 import 'package:doniranjeorgana_desktop/widget/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -74,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 16,
             ),
-            _buildTotalRegistratedUserCard(),
+            _buildSendMailCard(),
           ],
         ))
       ],
@@ -130,32 +131,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTotalRegistratedUserCard() {
+  Widget _buildSendMailCard() {
     return Center(
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.2,
-        child: Card(
-          color: Colors.white.withOpacity(0.8),
-          elevation: 4,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Total Users registrated on the App:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                Text(
-                  '$_brojKorisnika',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                ),
-              ],
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MailScreen()),
+          );
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.2,
+          height: 130,
+          child: Card(
+            color: Colors.white.withOpacity(0.8),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0)),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20.0),
+                  Center(
+                    child: Text(
+                      '@',
+                      style:
+                          TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

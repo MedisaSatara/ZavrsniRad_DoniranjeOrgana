@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:doniranjeorgana_mobile/models/donori.dart';
 import 'package:doniranjeorgana_mobile/models/donorski_formular.dart';
+import 'package:doniranjeorgana_mobile/models/korisnik.dart';
 import 'package:doniranjeorgana_mobile/providers/donori_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/donorski_formular_provider.dart';
 import 'package:doniranjeorgana_mobile/providers/korisnik_provider.dart';
 import 'package:doniranjeorgana_mobile/widgets/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:signature/signature.dart';
@@ -16,9 +18,16 @@ class DonorskiFormularScreen extends StatefulWidget {
   final Function? onDataChanged;
   final String? korisnikIme;
   Donori? donor;
+  final Korisnik? korisnikData;
+  final DonorskiFormular? existingFormular;
 
   DonorskiFormularScreen(
-      {Key? key, this.onDataChanged, this.korisnikIme, this.donor})
+      {Key? key,
+      this.onDataChanged,
+      this.korisnikIme,
+      this.donor,
+      this.korisnikData,
+      this.existingFormular})
       : super(key: key);
 
   @override
@@ -34,6 +43,7 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
   List<Donori>? _donori;
   Donori? _selectedDonoriId;
   DonorskiFormular? _prethodnoPopunjen;
+  late TextEditingController _datumPrijaveController;
 
   final controller = SignatureController(
       penColor: Colors.black,
@@ -43,6 +53,7 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
 
   @override
   void dispose() {
+    _datumPrijaveController.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -50,6 +61,20 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
   @override
   void initState() {
     super.initState();
+    _datumPrijaveController = TextEditingController();
+    if (widget.existingFormular != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _formKey.currentState?.patchValue({
+          'datumPrijave': widget.existingFormular!.datumPrijave,
+          'datumAzuriranja': widget.existingFormular!.datumAzuriranja,
+          'organiZaDonaciju': widget.existingFormular!.organiZaDonaciju,
+          'saglasnost': widget.existingFormular!.saglasnost == 1,
+          'napomena': widget.existingFormular!.napomena,
+          'potpis': widget.existingFormular!.potpis,
+
+        });
+      });
+    }
   }
 
   @override
@@ -68,8 +93,8 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
       setState(() {
         _donori = donoriData.result;
 
-        if (widget.korisnikIme != null) {
-          _selectedDonoriId = _donori?.firstWhere(
+        if (widget.korisnikIme != null && _donori != null) {
+          _selectedDonoriId = _donori!.firstWhere(
             (p) => "${p.ime} ${p.prezime}" == widget.korisnikIme,
           );
         }
@@ -90,52 +115,77 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.saveAndValidate()) {
-      final formData = _formKey.currentState!.value;
-      final mutableFormData = Map<String, dynamic>.from(formData);
+    if (_formKey.currentState?.saveAndValidate() != true) return;
 
-      if (_selectedDonoriId != null) {
-        mutableFormData['donoriId'] = _selectedDonoriId!.donorId!;
+    final formData = _formKey.currentState!.value;
+    final mutableFormData = Map<String, dynamic>.from(formData);
+
+    if (_selectedDonoriId != null) {
+      mutableFormData['donoriId'] = _selectedDonoriId!.donorId!;
+    }
+
+    if (mutableFormData['datumPrijave'] != null &&
+        mutableFormData['datumPrijave'] is DateTime) {
+      DateTime date = mutableFormData['datumPrijave'];
+      mutableFormData['datumPrijave'] = DateFormat('yyyy-MM-dd').format(date);
+    }
+
+    if (mutableFormData['datumAzuriranja'] != null &&
+        mutableFormData['datumAzuriranja'] is DateTime) {
+      DateTime date = mutableFormData['datumAzuriranja'];
+      mutableFormData['datumAzuriranja'] =
+          DateFormat('yyyy-MM-dd').format(date);
+    }
+
+    if (mutableFormData.containsKey('saglasnost')) {
+      mutableFormData['saglasnost'] =
+          mutableFormData['saglasnost'] == true ? 1 : 0;
+    }
+
+    if (controller.isNotEmpty) {
+      final signatureBytes = await controller.toPngBytes();
+      if (signatureBytes != null) {
+        mutableFormData['potpis'] = base64Encode(signatureBytes);
       }
+    }
 
-      if (mutableFormData.containsKey('saglasnost')) {
-        mutableFormData['saglasnost'] =
-            mutableFormData['saglasnost'] == true ? 1 : 0;
-      }
+    mutableFormData['insert'] = widget.existingFormular == null;
 
-      if (controller.isNotEmpty) {
-        final signatureBytes = await controller.toPngBytes();
-        if (signatureBytes != null) {
-          mutableFormData['potpis'] = base64Encode(signatureBytes);
-        }
-      }
-
-      mutableFormData['insert'] = true;
-
-      try {
+    try {
+      if (widget.existingFormular == null) {
         await _donorskiFormularProvider
             .insert(DonorskiFormular.fromJson(mutableFormData));
         _showSuccessMessage('Donor form successfully added!');
+      } else {
+        mutableFormData['donorskiFormularId'] =
+            widget.existingFormular!.donorskiFormularId;
+        mutableFormData['insert'] = false;
+        await _donorskiFormularProvider.update(
+            widget.existingFormular!.donorskiFormularId!,
+            DonorskiFormular.fromJson(mutableFormData));
 
-        if (widget.onDataChanged != null) {
-          widget.onDataChanged!();
-        }
-
-        Navigator.of(context).pop();
-      } catch (e) {
-        print('Error: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to save the donor. Please try again.')),
-        );
+        _showSuccessMessage('Donor form successfully updated!');
       }
+
+      if (widget.onDataChanged != null) {
+        widget.onDataChanged!();
+      }
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save the donor. Please try again.')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Organ donor form",
+      title: widget.existingFormular == null
+          ? "Add Donor Form"
+          : "Edit Donor Form",
       child: Center(
         child: Card(
           elevation: 8,
@@ -153,7 +203,7 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Text(
-                        '${widget.korisnikIme} , add your application to the donor list!',
+                        '${widget.korisnikIme}, ${widget.existingFormular == null ? 'add your application to the donor list!' : 'edit your application'}',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -175,127 +225,30 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
     return FormBuilder(
       key: _formKey,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'Fill out the donor form for yourself',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
-            ),
-            textAlign: TextAlign.center,
+          FormBuilderDateTimePicker(
+            name: 'datumPrijave',
+            inputType: InputType.date,
+            format: DateFormat('yyyy-MM-dd'),
+            decoration: const InputDecoration(labelText: 'Datum prijave'),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 16),
           FormBuilderTextField(
-            name: "datumPrijave",
-            readOnly: true,
-            decoration: InputDecoration(
-              labelText: "Date of Application",
-              border: OutlineInputBorder(),
-              suffixIcon: Icon(Icons.calendar_today, color: Colors.blueAccent),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-            ),
-            onTap: () async {
-              DateTime? selectedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
-
-              if (selectedDate != null) {
-                String formattedDate =
-                    "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-
-                _formKey.currentState?.fields['datumPrijave']
-                    ?.didChange(formattedDate);
-              }
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'This field is required! Format: yyyy-MM-dd';
-              }
-              return null;
-            },
+            name: 'organiZaDonaciju',
+            decoration: const InputDecoration(labelText: 'Organi za donaciju'),
           ),
-          SizedBox(height: 20),
-          FormBuilderTextField(
-            name: "organiZaDonaciju",
-            decoration: InputDecoration(
-              labelText: "Organs for Donation",
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-              hintText: "Enter organs separated by commas",
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'This field is required!';
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: 20),
+          const SizedBox(height: 16),
           FormBuilderCheckbox(
             name: 'saglasnost',
-            title: Text('I agree to donate.'),
-            validator: (value) {
-              if (value != true) {
-                return 'Morate dati saglasnost!';
-              }
-              return null;
-            },
+            title: const Text('Saglasnost za donaciju'),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 16),
           FormBuilderTextField(
             name: 'napomena',
-            decoration: InputDecoration(
-              labelText: 'Note',
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-            ),
+            decoration: const InputDecoration(labelText: 'Napomena'),
             maxLines: 3,
           ),
-          SizedBox(height: 20),
-          FormBuilderTextField(
-            name: "datumAzuriranja",
-            readOnly: true,
-            decoration: InputDecoration(
-              labelText: "Date of update",
-              border: OutlineInputBorder(),
-              suffixIcon: Icon(Icons.calendar_today, color: Colors.blueAccent),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-            ),
-            onTap: () async {
-              DateTime? selectedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
-
-              if (selectedDate != null) {
-                String formattedDate =
-                    "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-
-                _formKey.currentState?.fields['datumAzuriranja']
-                    ?.didChange(formattedDate);
-              }
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Unesite datum ažuriranja!';
-              }
-              return null;
-            },
-          ),
-          SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 16),
           if (_selectedDonoriId != null)
             Text(
               'Donor: ${_selectedDonoriId!.ime} ${_selectedDonoriId!.prezime}',
@@ -371,7 +324,7 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
                     ),
                   ),
                   child: Text(
-                    'Add',
+                    widget.existingFormular == null ? 'Add' : 'Update',
                     style: TextStyle(fontSize: 18),
                   ),
                 ),

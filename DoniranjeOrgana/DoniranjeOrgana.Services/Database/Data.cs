@@ -437,10 +437,10 @@ namespace DoniranjeOrgana.Services.Database
                 new Donori()
                 {
                     DonorId = 5501,
-                    Ime = "Medisa",
-                    Prezime = "Satara",
-                    Spol = "Z",
-                    DatumRodjenja = new DateTime(1998, 05, 07),
+                   // Ime = "Medisa",
+                   // Prezime = "Satara",
+                   // Spol = "Z",
+                   // DatumRodjenja = new DateTime(1998, 05, 07),
                     Telefon = "061 201 022",
                     MjestoRodjenja = "Mostar",
                     Jmbg = "1211998796541",
@@ -450,7 +450,7 @@ namespace DoniranjeOrgana.Services.Database
                     RhFaktor = "+",
                     HronicneBolesti = "Nema",
                     Alergija = "Voltaren",
-                    KorisnickoIme = "donor1",
+                   // KorisnickoIme = "donor1",
                     KorisnikId = 1002
                     /* LozinkaSalt = Salt[0],
                      LozinkaHash = PacijentService.GenerateHash(Salt[0], "pacijent05"),

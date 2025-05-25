@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using DoniranjeOrgana.Models.Model;
 
 namespace DoniranjeOrgana.Services.Service
 {
@@ -25,10 +26,12 @@ namespace DoniranjeOrgana.Services.Service
 
             if (!string.IsNullOrWhiteSpace(search?.ImeKorisnika))
             {
-                filteredQuery = filteredQuery.Where(x => x.Donori.Ime.Contains(search.ImeKorisnika.ToLower()));
+                filteredQuery = filteredQuery.Where(x => x.Donori.Korisnik.Ime.Contains(search.ImeKorisnika.ToLower()));
             }
             return filteredQuery;
         }
-       
+
+
+
     }
 }

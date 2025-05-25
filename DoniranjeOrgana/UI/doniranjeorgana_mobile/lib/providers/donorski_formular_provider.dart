@@ -13,4 +13,6 @@ class DonorskiFormularProvider extends BaseProvider<DonorskiFormular> {
   DonorskiFormular fromJson(data) {
     return DonorskiFormular.fromJson(data);
   }
+
+
 }
