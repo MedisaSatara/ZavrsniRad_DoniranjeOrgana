@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoniranjeOrgana.Services.Service
 {
@@ -16,6 +17,10 @@ namespace DoniranjeOrgana.Services.Service
             : base(context, mapper)
         {
 
+        }
+        public override IQueryable<Database.Donori> AddInclude(IQueryable<Database.Donori> query, DonoriSearchObject? search = null)
+        {
+            return query.Include(x => x.Korisnik);
         }
     }
 }

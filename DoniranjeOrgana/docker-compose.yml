@@ -42,8 +42,8 @@ services:
       - RABBITMQ_PASSWORD=test
       - SMTP_SERVER=smtp.outlook.com
       - SMTP_PORT=587
-      - SMTP_USERNAME=tt8915119@gmail.com
-      - SMTP_PASSWORD=pass12$TEST22
+      - SMTP_USERNAME=testposiljaoca11@gmail.com
+      - SMTP_PASSWORD=ormzipfjoktqosnh
     ports:
       - 7074:7074
     networks:
@@ -67,8 +67,8 @@ services:
       - RABBITMQ_PASSWORD=test
       - SMTP_SERVER=smtp.outlook.com
       - SMTP_PORT=587
-      - SMTP_USERNAME=tt8915119@gmail.com
-      - SMTP_PASSWORD=pass12$TEST22
+      - SMTP_USERNAME=testposiljaoca11@gmail.com
+      - SMTP_PASSWORD=ormzipfjoktqosnh
     depends_on:
       - rabbitmqq
     networks:

@@ -47,6 +47,7 @@ dependencies:
   uuid: ^4.5.1
   smooth_page_indicator: ^1.1.0
   url_launcher: ^6.2.5
+  charts_flutter_updated: ^0.16.0
 
 dev_dependencies:
   json_serializable: ^6.7.0
@@ -84,6 +85,8 @@ flutter:
     - assets/images/about3.jpg
     - assets/images/loginpage.jpg
     - assets/images/organdonor.jpg
+    - assets/images/home1.jpg
+    - assets/images/home.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

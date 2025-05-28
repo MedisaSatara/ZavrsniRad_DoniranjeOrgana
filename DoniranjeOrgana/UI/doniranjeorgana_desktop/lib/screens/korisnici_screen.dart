@@ -1,7 +1,6 @@
 import 'package:doniranjeorgana_desktop/models/korisnik.dart';
 import 'package:doniranjeorgana_desktop/models/search_result.dart';
 import 'package:doniranjeorgana_desktop/providers/korisnik_provider.dart';
-import 'package:doniranjeorgana_desktop/widget/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,9 +11,9 @@ class UsersScreens extends StatefulWidget {
 
 class _UsersScreensState extends State<UsersScreens> {
   late KorisnikProvider _korisnikProvider;
-
   int? _brojKorisnika;
   SearchResult<Korisnik>? _korisnici;
+  String _searchTerm = "";
 
   @override
   void didChangeDependencies() {
@@ -25,7 +24,8 @@ class _UsersScreensState extends State<UsersScreens> {
 
   Future<void> _fetchKorisnici() async {
     try {
-      var korisniciData = await _korisnikProvider.get();
+      var korisniciData =
+          await _korisnikProvider.get(filter: {'search': _searchTerm});
       setState(() {
         _korisnici = korisniciData;
         _brojKorisnika = korisniciData.count;
@@ -35,52 +35,58 @@ class _UsersScreensState extends State<UsersScreens> {
     }
   }
 
+  void _onSearchChanged(String value) {
+    setState(() {
+      _searchTerm = value;
+    });
+    _fetchKorisnici();
+  }
+
+  void _deleteUser(Korisnik korisnik) async {
+    print("Delete user: ${korisnik.korisnickoIme}");
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return Future.value(false);
-      },
-      child: MasterScreenWidget(
-        child: Stack(
+    return Scaffold(
+      backgroundColor: Color(0xFFF4F4F4),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Positioned.fill(
-              child: Image.asset(
-                "assets/images/images.jpg",
-                fit: BoxFit.contain,
+            Text(
+              "User app\nnumber: ${_brojKorisnika ?? 0}",
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF264653),
               ),
             ),
-            Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Text(
-                        "User app number: ${_brojKorisnika ?? 0}",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.85),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: _buildUserTable(),
-                    ),
-                  ],
-                ),
+            const SizedBox(height: 24),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Search by name or username...',
+                prefixIcon: Icon(Icons.search),
+                filled: true,
+                fillColor: Color(0xFFF4F4F4),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+              ),
+              onChanged: _onSearchChanged,
+            ),
+            const SizedBox(height: 24),
+            Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _buildUserTable(),
               ),
             ),
           ],
@@ -91,52 +97,59 @@ class _UsersScreensState extends State<UsersScreens> {
 
   Widget _buildUserTable() {
     if (_korisnici == null || _korisnici!.result.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return Center(child: CircularProgressIndicator());
     }
-    return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columns: const [
-            DataColumn(
-                label: Text(
-              'First name',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              'Last name',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              'Email',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              'Phone number',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              'Username',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-          ],
-          rows: _korisnici!.result.map((korisnik) {
-            return DataRow(cells: [
-              DataCell(Text(korisnik.ime ?? "")),
-              DataCell(Text(korisnik.prezime ?? "")),
-              DataCell(Text(korisnik.email ?? "")),
-              DataCell(Text(korisnik.telefon ?? "")),
-              DataCell(Text(korisnik.korisnickoIme ?? "")),
-            ]);
-          }).toList(),
-        ));
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 2,
+      ),
+      itemCount: _korisnici!.result.length,
+      itemBuilder: (context, index) {
+        final korisnik = _korisnici!.result[index];
+        return Card(
+          elevation: 4,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${korisnik.ime ?? ''} ${korisnik.prezime ?? ''}",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text("📧 ${korisnik.email ?? ''}"),
+                    Text("📱 ${korisnik.telefon ?? ''}"),
+                    Text("👤 ${korisnik.korisnickoIme ?? ''}"),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deleteUser(korisnik),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

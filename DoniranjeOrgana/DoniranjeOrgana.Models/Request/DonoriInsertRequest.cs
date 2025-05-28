@@ -20,9 +20,13 @@ namespace DoniranjeOrgana.Models.Request
         public string? RhFaktor { get; set; }
         public string? HronicneBolesti { get; set; }
         public string? Alergija { get; set; }
-        public string KorisnickoIme { get; set; } = null!;
-        public string? LozinkaSalt { get; set; }
-        public string? LozinkaHash { get; set; }
+        public string? StatusDonora { get; set; }
+        public int? AktivanDonor { get; set; }
+        public DateTime? DatumAktivacije { get; set; }
+        public DateTime? DatumSmrti { get; set; }
+        // public string KorisnickoIme { get; set; } = null!;
+        // public string? LozinkaSalt { get; set; }
+        // public string? LozinkaHash { get; set; }
         public int? KorisnikId { get; set; }
         //public virtual Korisnik? Korisnik { get; set; }
         //public virtual ICollection<DonorskiFormula> DonorskiFormulas { get; set; }

@@ -172,8 +172,5 @@ namespace DoniranjeOrgana.Services.Service
             }
         }
 
-
-
-
     }
 }

@@ -1,4 +1,7 @@
 import 'package:doniranjeorgana_desktop/providers/doktor_provider.dart';
+import 'package:doniranjeorgana_desktop/providers/donacija_krvi_provider.dart';
+import 'package:doniranjeorgana_desktop/providers/donacija_organa_provider.dart';
+import 'package:doniranjeorgana_desktop/providers/donori_provider.dart';
 import 'package:doniranjeorgana_desktop/providers/korisnik_provider.dart';
 import 'package:doniranjeorgana_desktop/providers/korisnik_uloga_provider.dart';
 import 'package:doniranjeorgana_desktop/providers/osiguranje_provider.dart';
@@ -9,6 +12,7 @@ import 'package:doniranjeorgana_desktop/providers/specijalizacija_provider.dart'
 import 'package:doniranjeorgana_desktop/providers/uloga_provider.dart';
 import 'package:doniranjeorgana_desktop/screens/welcome_screen.dart';
 import 'package:doniranjeorgana_desktop/utils/util.dart';
+import 'package:doniranjeorgana_desktop/widget/master_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,9 +27,12 @@ void main() {
       ChangeNotifierProvider(create: (_) => OsiguranjeProvider()),
       ChangeNotifierProvider(create: (_) => PacijentOsiguranjeProvider()),
       ChangeNotifierProvider(create: (_) => UlogaProvider()),
+      ChangeNotifierProvider(create: (_) => DonacijaOrganaProvider()),
+      ChangeNotifierProvider(create: (_) => DonoriProvider()),
+      ChangeNotifierProvider(create: (_) => DonacijaKrviProvider()),
       ChangeNotifierProvider(create: (_) => KorisnikUlogaProvider()),
     ],
-    child: MyMaterialApp(),
+     child: const MyApp(),
   ));
 }
 
@@ -67,4 +74,3 @@ class MyMaterialApp extends StatelessWidget {
     );
   }
 }
-

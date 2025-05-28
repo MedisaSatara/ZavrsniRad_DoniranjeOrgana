@@ -44,7 +44,7 @@ consumer.Received += (sender, args) =>
 
     Console.WriteLine($"Message received: {message}");
     EmailService emailService = new EmailService();
-    emailService.SendEmail(message);
+    // emailService.SendEmail(message);
 
     channel.BasicAck(args.DeliveryTag, false);
 };

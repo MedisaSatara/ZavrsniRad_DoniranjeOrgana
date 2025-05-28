@@ -10,6 +10,7 @@ namespace DoniranjeOrgana.Models.Request.SearchObject
     {
         public string? Ime { get; set; }
         public string? Prezime { get; set; }
+        public bool? IsKorisnikIncluded { get; set; }
 
     }
 }

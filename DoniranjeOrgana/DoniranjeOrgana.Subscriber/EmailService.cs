@@ -1,59 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Net.Mail;
 
 namespace DoniranjeOrgana.Subscriber
 {
     public class EmailService
     {
-        public class EmailModelToParse
+        private readonly string _smtpServer;
+        private readonly int _smtpPort;
+        private readonly string _adminEmail;
+        private readonly string _adminPassword;
+
+        public EmailService()
         {
-            public string Sender { get; set; }
-            public string Recipient { get; set; }
-            public string Subject { get; set; }
-            public string Content { get; set; }
+            _smtpServer = Environment.GetEnvironmentVariable("SMTP_SERVER") ?? "smtp.gmail.com";
+            _smtpPort = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT") ?? "587");
+            _adminEmail = Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? "testposiljaoca11@gmail.com";
+            _adminPassword = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? "pass456TR$";
         }
-        public void SendEmail(string message)
+
+        public async Task SendEmailAsync(string recipientEmail, string subject, string body)
         {
-            try
+            using var message = new MailMessage();
+            message.From = new MailAddress(_adminEmail);
+            message.To.Add(recipientEmail);
+            message.Subject = subject;
+            message.Body = body;
+            message.IsBodyHtml = false;
+
+            using var client = new SmtpClient(_smtpServer, _smtpPort)
             {
-                string smtpServer = Environment.GetEnvironmentVariable("SMTP_SERVER") ?? "smtp.outlook.com";
-                int smtpPort = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT") ?? "587");
-                string fromMail = Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? "tt8915119@gmail.com";
-                string password = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? "pass12$TEST22";
+                Credentials = new NetworkCredential(_adminEmail, _adminPassword),
+                EnableSsl = true
+            };
 
-                var emailData = JsonConvert.DeserializeObject<EmailModelToParse>(message);
-                var senderEmail = emailData.Sender;
-                var recipientEmail = emailData.Recipient;
-                var subject = emailData.Subject;
-                var content = emailData.Content;
-
-                MailMessage MailMessageObj = new MailMessage();
-
-                MailMessageObj.From = new MailAddress(fromMail);
-                MailMessageObj.Subject = subject;
-                MailMessageObj.To.Add(recipientEmail);
-                MailMessageObj.Body = content;
-
-                var smtpClient = new SmtpClient()
-                {
-                    Host = smtpServer,
-                    Port = smtpPort,
-                    Credentials = new NetworkCredential(fromMail, password),
-                    EnableSsl = true
-                };
-
-                smtpClient.Send(MailMessageObj);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error sending email: {ex.Message}");
-            }
+            await client.SendMailAsync(message);
         }
     }
+
+
 }

@@ -22,6 +22,9 @@ Donori _$DonoriFromJson(Map<String, dynamic> json) => Donori(
       json['hronicneBolesti'] as String?,
       (json['korisnikId'] as num?)?.toInt(),
       json['korisnickoIme'] as String?,
+      json['korisnik'] == null
+          ? null
+          : Korisnik.fromJson(json['korisnik'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$DonoriToJson(Donori instance) => <String, dynamic>{
@@ -40,4 +43,5 @@ Map<String, dynamic> _$DonoriToJson(Donori instance) => <String, dynamic>{
       'korisnickoIme': instance.korisnickoIme,
       'alergija': instance.alergija,
       'korisnikId': instance.korisnikId,
+      'korisnik': instance.korisnik,
     };

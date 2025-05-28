@@ -30,13 +30,13 @@ namespace DoniranjeOrgana.Services.Database
         public virtual DbSet<Terapija> Terapijas { get; set; } = null!;
         public virtual DbSet<Uloga> Ulogas { get; set; } = null!;
         public virtual DbSet<Donori> Donoris { get; set; } = null!;
-
+        public virtual DbSet<DonacijaKrvi> DonacijaKrvis { get; set; } = null!;
+        //public virtual DbSet<DonacijaOrgana> DonacijaOrganas { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=DoniranjeOrgana;User Id=sa;Password=st123W!a;TrustServerCertificate=True");
             }
         }
@@ -82,20 +82,19 @@ namespace DoniranjeOrgana.Services.Database
 
                 entity.Property(e => e.DatumPrijave).HasColumnType("datetime");
 
-               // entity.Property(e => e.NacinSaglasnosti).HasMaxLength(100);
 
                 entity.Property(e => e.Napomena).HasMaxLength(250);
 
                 entity.Property(e => e.OrganiZaDonaciju).HasMaxLength(250);
-               // entity.Property(e => e.Potpis).HasMaxLength(250);
-
-
-                // entity.Property(e => e.StatusPrijave).HasMaxLength(150);
+                // entity.Property(e => e.Potpis).HasMaxLength(250);
 
                 entity.HasOne(d => d.Donori)
-                    .WithMany(p => p.DonorskiFormulas)
-                    .HasForeignKey(d => d.DonorId)
-                    .HasConstraintName("FK_Donori_DonorskiFormular");
+                   .WithMany(p => p.DonorskiFormulas)
+     .HasForeignKey(d => d.DonorId)
+     .OnDelete(DeleteBehavior.Restrict) 
+     .HasConstraintName("FK_Donori_DonorskiFormular");
+
+
             });
 
             modelBuilder.Entity<Korisnik>(entity =>
@@ -170,7 +169,7 @@ namespace DoniranjeOrgana.Services.Database
 
                 entity.Property(e => e.Alergija).HasMaxLength(250);
 
-                entity.Property(e => e.BrojKartona).HasMaxLength(10);
+               // entity.Property(e => e.BrojKartona).HasMaxLength(10);
 
                 entity.Property(e => e.DatumRodjenja).HasMaxLength(10);
 
@@ -182,13 +181,13 @@ namespace DoniranjeOrgana.Services.Database
                     .HasMaxLength(13)
                     .HasColumnName("JMBG");
 
-                entity.Property(e => e.KorisnickoIme).HasMaxLength(20);
+              //  entity.Property(e => e.KorisnickoIme).HasMaxLength(20);
 
                 entity.Property(e => e.KrvnaGrupa).HasMaxLength(10);
 
-                entity.Property(e => e.LozinkaHash).HasMaxLength(50);
+              //  entity.Property(e => e.LozinkaHash).HasMaxLength(50);
 
-                entity.Property(e => e.LozinkaSalt).HasMaxLength(50);
+              //  entity.Property(e => e.LozinkaSalt).HasMaxLength(50);
 
                 entity.Property(e => e.MjestoRodjenja).HasMaxLength(50);
 
@@ -276,34 +275,23 @@ namespace DoniranjeOrgana.Services.Database
                 entity.ToTable("Donori");
 
                 entity.Property(e => e.Alergija).HasMaxLength(250);
-
-               // entity.Property(e => e.DatumRodjenja).HasMaxLength(10);
-
                 entity.Property(e => e.HronicneBolesti).HasMaxLength(250);
-
-               // entity.Property(e => e.Ime).HasMaxLength(30);
 
                 entity.Property(e => e.Jmbg)
                     .HasMaxLength(13)
                     .HasColumnName("JMBG");
 
-             //   entity.Property(e => e.KorisnickoIme).HasMaxLength(20);
-
                 entity.Property(e => e.KrvnaGrupa).HasMaxLength(10);
 
-                entity.Property(e => e.LozinkaHash).HasMaxLength(50);
+               // entity.Property(e => e.LozinkaHash).HasMaxLength(50);
 
-                entity.Property(e => e.LozinkaSalt).HasMaxLength(50);
+               // entity.Property(e => e.LozinkaSalt).HasMaxLength(50);
 
                 entity.Property(e => e.MjestoRodjenja).HasMaxLength(50);
 
                 entity.Property(e => e.Prebivaliste).HasMaxLength(50);
 
-              //  entity.Property(e => e.Prezime).HasMaxLength(30);
-
                 entity.Property(e => e.RhFaktor).HasMaxLength(20);
-
-             //   entity.Property(e => e.Spol).HasMaxLength(1);
 
                 entity.Property(e => e.Telefon).HasMaxLength(20);
 
@@ -312,6 +300,42 @@ namespace DoniranjeOrgana.Services.Database
                     .HasForeignKey(d => d.KorisnikId)
                     .HasConstraintName("FK_Korisnik_Donori");
             });
+            modelBuilder.Entity<DonacijaKrvi>().HasKey(z => z.DonacijiKrviId);
+            modelBuilder.Entity<DonacijaKrvi>(entity =>
+            {
+                entity.ToTable("DonacijaKrvi");
+
+                entity.Property(e => e.Status).HasMaxLength(250);
+                entity.Property(e => e.Napomena).HasMaxLength(250);
+               
+                entity.Property(e => e.DatumDonacije).HasMaxLength(20);
+
+                entity.Property(e => e.Lokacija).HasMaxLength(50);
+
+                entity.Property(e => e.Kolicina).HasMaxLength(50);
+
+                entity.HasOne(d => d.Donori)
+                    .WithMany(p => p.DonacijaKrvis)
+                    .HasForeignKey(d => d.DonorId)
+                    .HasConstraintName("FK_DonacijaKrvi_Donori");
+            });
+         //   modelBuilder.Entity<DonacijaOrgana>().HasKey(z => z.DonacijaOrganaId);
+           /* modelBuilder.Entity<DonacijaOrgana>(entity =>
+            {
+                entity.ToTable("DonacijaOrgana");
+
+                entity.Property(e => e.DatumAktivacije).HasMaxLength(20);
+
+                entity.HasOne(d => d.Donori)
+                    .WithMany(p => p.DonacijaOrganas)
+                    .HasForeignKey(d => d.DonoriId)
+                    .HasConstraintName("FK_Donori_DonacijaOrgana");
+
+                entity.HasOne(d => d.DonorskiFormula)
+                    .WithMany(p => p.DonacijaOrganas)
+                    .HasForeignKey(d => d.DonorskiFormularId)
+                    .HasConstraintName("FK_DonorskiFormular_DonacijaOrgana");
+            });*/
 
             OnModelCreatingPartial(modelBuilder);
             modelBuilder.Seed();

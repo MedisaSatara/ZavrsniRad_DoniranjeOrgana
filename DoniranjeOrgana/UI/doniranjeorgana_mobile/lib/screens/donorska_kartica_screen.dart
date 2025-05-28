@@ -95,7 +95,7 @@ class _DonorskaKarticaScreenState extends State<DonorskaKarticaScreen> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'Birth date: ${_korisnik!.datumRodjenja != null ? DateFormat('dd.MM.yyyy').format(DateFormat('yyyyMM/dd').parse(_korisnik!.datumRodjenja!)) : "N/A"}',
+                            'Birth date: ${_korisnik!.datumRodjenja != null ? DateFormat('dd.MM.yyyy').format(DateFormat('yyyy/MM/dd').parse(_korisnik!.datumRodjenja!)) : "N/A"}',
                             style: GoogleFonts.poppins(color: Colors.white),
                           ),
                           SizedBox(height: 16),

@@ -71,7 +71,6 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
           'saglasnost': widget.existingFormular!.saglasnost == 1,
           'napomena': widget.existingFormular!.napomena,
           'potpis': widget.existingFormular!.potpis,
-
         });
       });
     }
@@ -92,13 +91,29 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
       var donoriData = await _donoriProvider.get();
       setState(() {
         _donori = donoriData.result;
-
-        if (widget.korisnikIme != null && _donori != null) {
-          _selectedDonoriId = _donori!.firstWhere(
-            (p) => "${p.ime} ${p.prezime}" == widget.korisnikIme,
-          );
-        }
       });
+
+      for (var donor in _donori!) {
+        if (donor.korisnikId != null) {
+          var korisnik = await _korisnikProvider.getById(donor.korisnikId!);
+          donor.korisnik = korisnik;
+        }
+      }
+
+      setState(() {});
+
+      if (widget.korisnikIme != null && _donori != null) {
+        try {
+          _selectedDonoriId = _donori!.firstWhere(
+            (p) =>
+                "${p.korisnik?.ime} ${p.korisnik?.prezime}" ==
+                widget.korisnikIme,
+          );
+        } catch (e) {
+          _selectedDonoriId = null;
+          print('Donor not found for korisnikIme: ${widget.korisnikIme}');
+        }
+      }
     } catch (e) {
       print('Error fetching donori: $e');
     }
@@ -230,28 +245,28 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
             name: 'datumPrijave',
             inputType: InputType.date,
             format: DateFormat('yyyy-MM-dd'),
-            decoration: const InputDecoration(labelText: 'Datum prijave'),
+            decoration: const InputDecoration(labelText: 'Application date'),
           ),
           const SizedBox(height: 16),
           FormBuilderTextField(
             name: 'organiZaDonaciju',
-            decoration: const InputDecoration(labelText: 'Organi za donaciju'),
+            decoration: const InputDecoration(labelText: 'Organ to donate'),
           ),
           const SizedBox(height: 16),
           FormBuilderCheckbox(
             name: 'saglasnost',
-            title: const Text('Saglasnost za donaciju'),
+            title: const Text('Do you confirm your consent to organ donation?'),
           ),
           const SizedBox(height: 16),
           FormBuilderTextField(
             name: 'napomena',
-            decoration: const InputDecoration(labelText: 'Napomena'),
+            decoration: const InputDecoration(labelText: 'Reminder'),
             maxLines: 3,
           ),
           const SizedBox(height: 16),
           if (_selectedDonoriId != null)
             Text(
-              'Donor: ${_selectedDonoriId!.ime} ${_selectedDonoriId!.prezime}',
+              'Donor: ${_selectedDonoriId!.korisnik?.ime} ${_selectedDonoriId!.korisnik?.prezime}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           SizedBox(height: 30),
@@ -288,13 +303,13 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
                     final signature = await controller.toPngBytes();
                     if (signature != null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Potpis je spremljen!')),
+                        SnackBar(content: Text('Signature is saved!')),
                       );
                     }
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 190, 36, 25),
+                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                   foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                 ),
               ),
@@ -318,7 +333,7 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -343,7 +358,7 @@ class _DonorskiFormularScreen extends State<DonorskiFormularScreen> {
                   ),
                   child: Text(
                     'Cancel',
-                    style: TextStyle(fontSize: 18, color: Colors.blueAccent),
+                    style: TextStyle(fontSize: 18, color: Colors.red),
                   ),
                 ),
               ),

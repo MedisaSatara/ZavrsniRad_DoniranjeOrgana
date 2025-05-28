@@ -38,10 +38,6 @@ namespace DoniranjeOrgana.Services.Service
             {
                 filteredQuery = filteredQuery.Where(x => x.Pacijent.Prezime.Contains(search.PrezimePacijenta.ToLower()));
             }
-            if (!string.IsNullOrWhiteSpace(search?.BrojKartona))
-            {
-                filteredQuery = filteredQuery.Where(x => x.Pacijent.BrojKartona.Contains(search.BrojKartona.ToLower()));
-            }
 
 
             return filteredQuery;

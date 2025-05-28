@@ -1,43 +1,99 @@
 import 'package:flutter/material.dart';
 
-class MailScreen extends StatelessWidget {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _subjectController = TextEditingController();
-  final TextEditingController _bodyController = TextEditingController();
+class MailScreen extends StatefulWidget {
+  @override
+  _MailScreenState createState() => _MailScreenState();
+}
+
+class _MailScreenState extends State<MailScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _krvnaGrupaController = TextEditingController();
+  final TextEditingController _porukaController = TextEditingController();
+
+  @override
+  void dispose() {
+    _krvnaGrupaController.dispose();
+    _porukaController.dispose();
+    super.dispose();
+  }
+
+  void _posaljiMail() {
+    if (_formKey.currentState!.validate()) {
+      final krvnaGrupa = _krvnaGrupaController.text;
+      final poruka = _porukaController.text;
+
+      print("Šaljem mail donorima s krvnom grupom: $krvnaGrupa");
+      print("Poruka: $poruka");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Poruka poslana donorima sa krvnom grupom $krvnaGrupa')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Pošalji Email")),
+      appBar: AppBar(
+        title: Text("Pošalji poruku donorima"),
+        backgroundColor: Colors.red,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email korisnika'),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _subjectController,
-              decoration: InputDecoration(labelText: 'Naslov'),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _bodyController,
-              decoration: InputDecoration(labelText: 'Poruka'),
-              maxLines: 5,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                print("Email: ${_emailController.text}");
-                print("Subject: ${_subjectController.text}");
-                print("Body: ${_bodyController.text}");
-              },
-              child: Text("Pošalji"),
-            ),
-          ],
+        padding: const EdgeInsets.all(24.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Unesite krvnu grupu:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              TextFormField(
+                controller: _krvnaGrupaController,
+                decoration: InputDecoration(
+                  hintText: "npr. A+, B-, AB+...",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Unesite krvnu grupu";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 24),
+              Text(
+                "Poruka za donore:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              TextFormField(
+                controller: _porukaController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: "Unesite poruku koju želite poslati...",
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Unesite poruku";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 32),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: _posaljiMail,
+                  icon: Icon(Icons.send),
+                  label: Text("Pošalji"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

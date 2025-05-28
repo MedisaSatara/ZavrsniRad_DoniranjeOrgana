@@ -78,6 +78,10 @@ namespace DoniranjeOrgana.Services.Mapping
             CreateMap<DonoriInsertRequest, Database.Donori>();
             CreateMap<DonoriUpdateRequest, Database.Donori>();
 
+            CreateMap<Database.DonacijaKrvi, Models.Model.DonacijaKrvi>();
+            CreateMap<DonacijaKrviSeacrhObject, Database.DonacijaKrvi>();
+            CreateMap<DonacijaKrviInsertRequest, Database.DonacijaKrvi>();
+            CreateMap<DonacijaKrviUpdateRequest, Database.DonacijaKrvi>();
 
         }
     }

@@ -1,3 +1,4 @@
+import 'package:doniranjeorgana_mobile/models/korisnik.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 /// This allows the `User` class to access private members in
@@ -24,7 +25,8 @@ class Donori {
       this.alergija,
       this.hronicneBolesti,
       this.korisnikId,
-      this.korisnickoIme
+      this.korisnickoIme,
+      this.korisnik
       );
 
   int? donorId;
@@ -43,6 +45,7 @@ class Donori {
   String? alergija;
   bool? koagulopatija;
   int? korisnikId;
+  Korisnik? korisnik;
 
   factory Donori.fromJson(Map<String, dynamic> json) =>
       _$DonoriFromJson(json);

@@ -9,12 +9,10 @@ namespace DoniranjeOrgana.Models.Model
     public class DonorskiFormular
     {
         public int DonorskiFormularId { get; set; }
-        public int? PacijentId { get; set; }
+        public int? DonorId { get; set; }
         public DateTime? DatumPrijave { get; set; }
         public string? OrganiZaDonaciju { get; set; }
         public int? Saglasnost { get; set; }
-        //public string? NacinSaglasnosti { get; set; }
-        //public string? StatusPrijave { get; set; }
         public string? Napomena { get; set; }
         public DateTime? DatumAzuriranja { get; set; }
 

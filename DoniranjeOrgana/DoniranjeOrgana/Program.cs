@@ -32,8 +32,11 @@ builder.Services.AddTransient<IKorisnikUlogaService, KorisnikUlogaService>();
 builder.Services.AddTransient<IOboljenjeService, OboljenjeService>();
 builder.Services.AddTransient<IDonorskiFormularService, DonorskiFormularService>();
 builder.Services.AddTransient<IDonoriService, DonoriService>();
+builder.Services.AddTransient<IDonacijiKrviService, DonacijaKrviService>();
+
 
 builder.Services.AddSingleton<IMailProducer, MailProducer>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 

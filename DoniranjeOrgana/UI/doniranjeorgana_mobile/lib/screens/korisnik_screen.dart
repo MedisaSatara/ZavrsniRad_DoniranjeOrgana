@@ -117,25 +117,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildInfoRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Text(
-            '$label: ',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          Expanded(
-            child: Text(value ?? '-',
-                style: TextStyle(
-                    color: Colors.black87, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildHomePage() {
     final korisnik = korisnikResult?.first;
 
@@ -227,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => DonorskiFormularScreen(
-                            korisnikIme: '${donor.ime} ${donor.prezime}',
+                            korisnikIme: '${donor.korisnik?.ime} ${donor.korisnik?.prezime}',
                             donor: donor,
                             korisnikData: korisnikResult!.first,
                             existingFormular: existingFormular,

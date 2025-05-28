@@ -22,7 +22,7 @@ namespace DoniranjeOrgana.Models.Request
         public string? HronicneBolesti { get; set; }
         public string? Alergija { get; set; }
         public bool? Koagulopatija { get; set; }
-        public string BrojKartona { get; set; } = null!;
+       // public string BrojKartona { get; set; } = null!;
         /*public string KorisnickoIme { get; set; } = null!;
         public string? Password { get; set; }
         public string? PotvrdaPassworda { get; set; }

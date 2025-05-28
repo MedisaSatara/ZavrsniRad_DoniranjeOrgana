@@ -1,4 +1,6 @@
-﻿using DoniranjeOrgana.Services.RabbitMQ;
+﻿using DoniranjeOrgana.Models.Model;
+using DoniranjeOrgana.Models.Request;
+using DoniranjeOrgana.Services.RabbitMQ;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
@@ -11,32 +13,31 @@ namespace DoniranjeOrgana.Service.RabbitMQ
 {
     public class MailProducer : IMailProducer
     {
-        public void SendEmail<T>(T message)
+        public void SendEmailMessage(DonacijaKrviNotifier message)
         {
-            var factory = new ConnectionFactory
+            var factory = new ConnectionFactory()
             {
-                HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost",
+                HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq",
                 Port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672"),
                 UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "test",
-                Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "test",
+                Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "test"
             };
-            factory.ClientProvidedName = "Rabbit Test";
 
-            /*IConnection connection = factory.CreateConnection();
-            IModel channel = connection.CreateModel();
+            using var connection = factory.CreateConnection();
+            using var channel = connection.CreateModel();
 
             string exchangeName = "EmailExchange";
             string routingKey = "email_queue";
-            string queueName = "EmailQueue";
 
             channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
-            channel.QueueDeclare(queueName, true, false, false, null);
-            channel.QueueBind(queueName, exchangeName, routingKey, null);
 
-            string emailModelJson = JsonConvert.SerializeObject(message);
-            byte[] messageBodyBytes = Encoding.UTF8.GetBytes(emailModelJson);
-            channel.BasicPublish(exchangeName, routingKey, null, messageBodyBytes);*/
+            var json = JsonConvert.SerializeObject(message);
+            var body = Encoding.UTF8.GetBytes(json);
 
+            channel.BasicPublish(exchange: exchangeName,
+                                 routingKey: routingKey,
+                                 basicProperties: null,
+                                 body: body);
         }
     }
 }
