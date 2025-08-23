@@ -73,7 +73,10 @@ namespace DoniranjeOrgana.Services.Mapping
             CreateMap<DonorskiFormularInsertRequest, Database.DonorskiFormula>();
             CreateMap<DonorskiFormularUpdateRequest, Database.DonorskiFormula>();
 
-            CreateMap<Database.Donori, Models.Model.Donori>();
+            CreateMap<Database.Donori, Models.Model.Donori>()
+    .ForMember(dest => dest.Korisnik,
+               opt => opt.MapFrom(src => src.Korisnik != null ? src.Korisnik : null));
+
             CreateMap<DonoriSearchObject, Database.Donori>();
             CreateMap<DonoriInsertRequest, Database.Donori>();
             CreateMap<DonoriUpdateRequest, Database.Donori>();
@@ -82,6 +85,11 @@ namespace DoniranjeOrgana.Services.Mapping
             CreateMap<DonacijaKrviSeacrhObject, Database.DonacijaKrvi>();
             CreateMap<DonacijaKrviInsertRequest, Database.DonacijaKrvi>();
             CreateMap<DonacijaKrviUpdateRequest, Database.DonacijaKrvi>();
+
+            CreateMap<Database.DavaociOrgana, Models.Model.DavaociOrgana>();
+            CreateMap<DavaociOrganaSearchObject, Database.DavaociOrgana>();
+            CreateMap<DavaociOrganaInsertRequest, Database.DavaociOrgana>();
+            CreateMap<DavaociOrganaUpdateRequest, Database.DavaociOrgana>();
 
         }
     }

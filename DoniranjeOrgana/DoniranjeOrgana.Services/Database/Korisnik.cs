@@ -27,6 +27,8 @@ namespace DoniranjeOrgana.Services.Database
         public virtual ICollection<KorisnikUloga> KorisnikUlogas { get; set; }
         public virtual ICollection<Pacijent> Pacijents { get; set; }
         public virtual ICollection<Donori> Donoris { get; set; }
+        public virtual ICollection<DavaociOrgana> DavaociOrganas { get; set; }
+
 
     }
 }

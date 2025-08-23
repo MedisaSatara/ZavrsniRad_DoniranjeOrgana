@@ -24,7 +24,9 @@ class Pacijent {
       this.brojKartona,
       this.alergija,
       this.hronicneBolesti,
-      this.korisnickoIme);
+      this.korisnickoIme,
+      this.organCekanja,
+      );
 
   int? pacijentId;
   String? ime;
@@ -42,6 +44,8 @@ class Pacijent {
   String? korisnickoIme;
   String? alergija;
   bool? koagulopatija;
+  String? organCekanja;
+
 
   factory Pacijent.fromJson(Map<String, dynamic> json) =>
       _$PacijentFromJson(json);

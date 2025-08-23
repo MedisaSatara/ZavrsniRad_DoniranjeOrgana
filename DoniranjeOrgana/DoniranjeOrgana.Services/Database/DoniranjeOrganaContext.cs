@@ -32,6 +32,8 @@ namespace DoniranjeOrgana.Services.Database
         public virtual DbSet<Donori> Donoris { get; set; } = null!;
         public virtual DbSet<DonacijaKrvi> DonacijaKrvis { get; set; } = null!;
         //public virtual DbSet<DonacijaOrgana> DonacijaOrganas { get; set; } = null!;
+        public virtual DbSet<DavaociOrgana> DavaociOrganas { get; set; } = null!;
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -300,6 +302,35 @@ namespace DoniranjeOrgana.Services.Database
                     .HasForeignKey(d => d.KorisnikId)
                     .HasConstraintName("FK_Korisnik_Donori");
             });
+
+
+            modelBuilder.Entity<DavaociOrgana>().HasKey(z => z.DavaociOrganaId);
+            modelBuilder.Entity<DavaociOrgana>(entity =>
+            {
+                entity.ToTable("DavaociOrgana");
+
+                entity.Property(e => e.Alergija).HasMaxLength(250);
+                entity.Property(e => e.HronicneBolesti).HasMaxLength(250);
+
+                entity.Property(e => e.Jmbg)
+                    .HasMaxLength(13)
+                    .HasColumnName("JMBG");
+
+                entity.Property(e => e.KrvnaGrupa).HasMaxLength(10);
+
+                entity.Property(e => e.MjestoRodjenja).HasMaxLength(50);
+
+                entity.Property(e => e.Prebivaliste).HasMaxLength(50);
+
+                entity.Property(e => e.RhFaktor).HasMaxLength(20);
+
+                entity.Property(e => e.Telefon).HasMaxLength(20);
+
+                entity.HasOne(d => d.Korisnik)
+                    .WithMany(p => p.DavaociOrganas)
+                    .HasForeignKey(d => d.KorisnikId)
+                    .HasConstraintName("FK_Korisnik_DavaociOrgana");
+            });
             modelBuilder.Entity<DonacijaKrvi>().HasKey(z => z.DonacijiKrviId);
             modelBuilder.Entity<DonacijaKrvi>(entity =>
             {
@@ -312,7 +343,7 @@ namespace DoniranjeOrgana.Services.Database
 
                 entity.Property(e => e.Lokacija).HasMaxLength(50);
 
-                entity.Property(e => e.Kolicina).HasMaxLength(50);
+                entity.Property(e => e.Kolicina).HasPrecision(10, 2);
 
                 entity.HasOne(d => d.Donori)
                     .WithMany(p => p.DonacijaKrvis)

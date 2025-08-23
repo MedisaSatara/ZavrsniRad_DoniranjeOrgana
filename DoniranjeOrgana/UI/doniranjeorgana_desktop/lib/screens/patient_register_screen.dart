@@ -4,6 +4,7 @@ import 'package:doniranjeorgana_desktop/models/pacijent.dart';
 import 'package:doniranjeorgana_desktop/models/search_result.dart';
 import 'package:doniranjeorgana_desktop/providers/pacijent_provider.dart';
 import 'package:doniranjeorgana_desktop/screens/patient_details_screen.dart';
+import 'package:doniranjeorgana_desktop/screens/patient_information_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -82,35 +83,48 @@ class _PatientRegisterScreenState extends State<PatientRegisterScreen> {
                             itemCount: _pacijenti!.result.length,
                             itemBuilder: (context, index) {
                               final pacijent = _pacijenti!.result[index];
-                              return Card(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "${pacijent.ime ?? ''} ${pacijent.prezime ?? ''}",
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFFB00020),
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PatientInformationScreen(
+                                              pacijent: pacijent),
+                                    ),
+                                  );
+                                },
+                                child: Card(
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${pacijent.ime ?? ''} ${pacijent.prezime ?? ''}",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFFB00020),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                          "Birth: ${pacijent.datumRodjenja?.toString().split(' ').first ?? ''}"),
-                                      Text(
-                                          "City: ${pacijent.prebivaliste ?? ''}"),
-                                      Text("Phone: ${pacijent.telefon ?? ''}"),
-                                      const Spacer(),
-                                      Text(
-                                          "Blood: ${pacijent.krvnaGrupa ?? ''}${pacijent.rhFaktor ?? ''}"),
-                                    ],
+                                        const SizedBox(height: 6),
+                                        Text(
+                                            "Birth: ${pacijent.datumRodjenja?.toString().split(' ').first ?? ''}"),
+                                        Text(
+                                            "City: ${pacijent.prebivaliste ?? ''}"),
+                                        Text(
+                                            "Phone: ${pacijent.telefon ?? ''}"),
+                                        const Spacer(),
+                                        Text(
+                                            "Blood: ${pacijent.krvnaGrupa ?? ''}${pacijent.rhFaktor ?? ''}"),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );

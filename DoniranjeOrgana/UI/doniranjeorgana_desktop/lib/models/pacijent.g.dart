@@ -22,6 +22,8 @@ Pacijent _$PacijentFromJson(Map<String, dynamic> json) => Pacijent(
       json['alergija'] as String?,
       json['hronicneBolesti'] as String?,
       json['korisnickoIme'] as String?,
+      json['organCekanja'] as String?,
+
     )..koagulopatija = json['koagulopatija'] as bool?;
 
 Map<String, dynamic> _$PacijentToJson(Pacijent instance) => <String, dynamic>{
@@ -41,4 +43,6 @@ Map<String, dynamic> _$PacijentToJson(Pacijent instance) => <String, dynamic>{
       'korisnickoIme': instance.korisnickoIme,
       'alergija': instance.alergija,
       'koagulopatija': instance.koagulopatija,
+      'organCekanja': instance.organCekanja,
+
     };

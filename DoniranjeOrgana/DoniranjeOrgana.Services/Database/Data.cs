@@ -480,6 +480,7 @@ namespace DoniranjeOrgana.Services.Database
                     RhFaktor = "+",
                     HronicneBolesti = "Nema",
                     Alergija = "Antibiotik",
+                    OrganCekanja="Bubreg"
                   //  KorisnickoIme = "Pacijent2",
                    // BrojKartona = "19378A",
                     /* LozinkaSalt = Salt[0],
@@ -757,7 +758,69 @@ namespace DoniranjeOrgana.Services.Database
                });
             #endregion
 
-           
+            #region DodavanjeDonori
+
+            modelBuilder.Entity<DavaociOrgana>().HasData(
+                new DavaociOrgana()
+                {
+                    DavaociOrganaId = 9401,
+                    Telefon = "061 201 022",
+                    MjestoRodjenja = "Mostar",
+                    Jmbg = "1211998796541",
+                    Prebivaliste = "Stolac",
+                    KrvnaGrupa = "AB",
+                    RhFaktor = "+",
+                    HronicneBolesti = "Nema",
+                    Alergija = "Voltaren",
+                    KorisnikId = 1002
+                },
+                 new DavaociOrgana()
+                 {
+                     DavaociOrganaId = 5913,
+                     Telefon = "064 201 022",
+                     MjestoRodjenja = "Mostar",
+                     Jmbg = "1211998796541",
+                     Prebivaliste = "Mostar",
+                     KrvnaGrupa = "A",
+                     RhFaktor = "+",
+                     HronicneBolesti = "Nema",
+                     Alergija = "Nema",
+                     KorisnikId = 1170,
+                     DatumAktivacije = new DateTime(2025, 01, 01),
+                     StatusDonora = "Živi",
+                 },
+                 new DavaociOrgana()
+                 {
+                     DavaociOrganaId = 5600,
+                     Telefon = "061 231 022",
+                     MjestoRodjenja = "Mostar",
+                     Jmbg = "1211998796541",
+                     Prebivaliste = "Stolac",
+                     KrvnaGrupa = "AB",
+                     RhFaktor = "+",
+                     HronicneBolesti = "Nema",
+                     Alergija = "Nema",
+                     KorisnikId = 1178,
+                     DatumAktivacije = new DateTime(2025, 01, 01),
+                     StatusDonora = "Živi",
+                 },
+                 new DavaociOrgana()
+                 {
+                     DavaociOrganaId = 7515,
+                     Telefon = "061 231 022",
+                     MjestoRodjenja = "Mostar",
+                     Jmbg = "1211998796541",
+                     Prebivaliste = "Stolac",
+                     KrvnaGrupa = "0",
+                     RhFaktor = "+",
+                     HronicneBolesti = "Nema",
+                     Alergija = "Nema",
+                     KorisnikId = 1179,
+                     DatumAktivacije = new DateTime(2025, 01, 01),
+                     StatusDonora = "Živi",
+                 }
+                );
+            #endregion
 
 
 

@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DoniranjeOrgana.Services.Database
+namespace DoniranjeOrgana.Models.Request
 {
-    public class Donori
+    public class DavaociOrganaInsertRequest
     {
-        public int DonorId { get; set; }
+        public string Ime { get; set; } = null!;
+        public string Prezime { get; set; } = null!;
+        public string Spol { get; set; } = null!;
+        public DateTime? DatumRodjenja { get; set; }
         public string Jmbg { get; set; } = null!;
         public string? MjestoRodjenja { get; set; }
         public string? Prebivaliste { get; set; }
@@ -17,19 +20,10 @@ namespace DoniranjeOrgana.Services.Database
         public string? RhFaktor { get; set; }
         public string? HronicneBolesti { get; set; }
         public string? Alergija { get; set; }
-
         public string? StatusDonora { get; set; }
         public int? AktivanDonor { get; set; }
         public DateTime? DatumAktivacije { get; set; }
         public DateTime? DatumSmrti { get; set; }
         public int? KorisnikId { get; set; }
-
-        public virtual Korisnik? Korisnik { get; set; }
-        public virtual ICollection<DonorskiFormula> DonorskiFormulas { get; set; }
-        public virtual ICollection<DonacijaKrvi> DonacijaKrvis { get; set; }
-       // public virtual ICollection<DonacijaOrgana> DonacijaOrganas { get; set; }
-
-
-
     }
 }

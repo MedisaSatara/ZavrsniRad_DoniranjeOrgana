@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DoniranjeOrgana.Services.Database
 {
-    public class Donori
+    public class DavaociOrgana
     {
-        public int DonorId { get; set; }
+        public int DavaociOrganaId { get; set; }
         public string Jmbg { get; set; } = null!;
         public string? MjestoRodjenja { get; set; }
         public string? Prebivaliste { get; set; }
@@ -27,9 +27,6 @@ namespace DoniranjeOrgana.Services.Database
         public virtual Korisnik? Korisnik { get; set; }
         public virtual ICollection<DonorskiFormula> DonorskiFormulas { get; set; }
         public virtual ICollection<DonacijaKrvi> DonacijaKrvis { get; set; }
-       // public virtual ICollection<DonacijaOrgana> DonacijaOrganas { get; set; }
-
-
-
+        // public virtual ICollection<DonacijaOrgana> DonacijaOrganas { get; set; }
     }
 }
