@@ -224,44 +224,4 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
-  /*Future<void> posaljiMail(String krvnaGrupa) async {
-    final url = Uri.parse(totalUrl ?? "$_baseUrl$_endpoint");
-    var headers = createHeaders();
-    final response = await http.post(
-      url,
-      headers: headers,
-      body: '"$krvnaGrupa"',
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Greška prilikom slanja emailova: ${response.body}');
-    }
-  }*/
-
-  Future<String> posaljiMail(String krvnaGrupa) async {
-    final url = Uri.parse(totalUrl ?? "$_baseUrl$_endpoint");
-
-    String username = Authorization.username ?? "";
-    String password = Authorization.password ?? "";
-
-    String basicAuth =
-        "Basic ${base64Encode(utf8.encode('$username:$password'))}";
-
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': basicAuth,
-    };
-
-    final response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode(krvnaGrupa),
-    );
-
-    if (response.statusCode == 200) {
-      return 'Email uspješno poslan donorima.';
-    } else {
-      throw Exception('Greška: ${response.body}');
-    }
-  }
 }

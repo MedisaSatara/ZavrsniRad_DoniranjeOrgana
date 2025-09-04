@@ -21,8 +21,8 @@ namespace DoniranjeOrgana.Services.Service
         public override IQueryable<Database.Donori> AddInclude(IQueryable<Database.Donori> query, DonoriSearchObject? search = null)
         {
             return query
-                .Include(x => x.Korisnik) // učitaj povezanog korisnika
-                .AsNoTracking();          // stabilnije za mapping
+                .Include(x => x.Korisnik) 
+                .AsNoTracking();          
         }
 
     }

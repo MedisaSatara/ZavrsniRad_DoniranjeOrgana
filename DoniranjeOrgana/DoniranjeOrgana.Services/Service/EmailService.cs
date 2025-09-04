@@ -11,7 +11,7 @@ namespace DoniranjeOrgana.Services.Service
     public class EmailService : IEmailService
     {
         private readonly string _fromEmail = "testposiljaoca11@gmail.com";
-        private readonly string _password = "ormzipfjoktqosnh";
+        private readonly string _password = "cmwpyfskukjqfwfx";
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {

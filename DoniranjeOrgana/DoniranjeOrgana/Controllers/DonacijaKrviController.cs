@@ -50,6 +50,8 @@ namespace DoniranjeOrgana.Controllers
                     }
                     catch (Exception ex)
                     {
+                        Console.WriteLine($"❌ Email error: {ex.Message}");
+                        throw;
                     }
                 }
             }

@@ -7,7 +7,7 @@ part of 'donori.dart';
 // **************************************************************************
 
 Donori _$DonoriFromJson(Map<String, dynamic> json) => Donori(
-      (json['donoriId'] as num?)?.toInt(),
+      (json['donorId'] as num?)?.toInt(),
       json['mjestoRodjenja'] as String?,
       json['jmbg'] as String?,
       json['telefon'] as String?,
@@ -31,7 +31,7 @@ Donori _$DonoriFromJson(Map<String, dynamic> json) => Donori(
     );
 
 Map<String, dynamic> _$DonoriToJson(Donori instance) => <String, dynamic>{
-      'donoriId': instance.donoriId,
+      'donorId': instance.donorId,
       'mjestoRodjenja': instance.mjestoRodjenja,
       'jmbg': instance.jmbg,
       'telefon': instance.telefon,

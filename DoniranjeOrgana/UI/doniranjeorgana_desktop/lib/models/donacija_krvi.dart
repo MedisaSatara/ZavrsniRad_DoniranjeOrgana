@@ -12,7 +12,7 @@ part 'donacija_krvi.g.dart';
 class DonacijaKrvi {
   DonacijaKrvi(
     this.donacijaKrviId,
-    this.donoriId,
+    this.donorId,
     this.datumDonacije,
     this.kolicina,
     this.lokacija,
@@ -20,7 +20,7 @@ class DonacijaKrvi {
     this.status,
   );
   int? donacijaKrviId;
-  int? donoriId;
+  int? donorId;
   DateTime? datumDonacije;
   String? kolicina;
   String? lokacija;

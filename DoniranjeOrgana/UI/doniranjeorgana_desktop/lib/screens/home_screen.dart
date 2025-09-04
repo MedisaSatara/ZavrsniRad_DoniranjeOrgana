@@ -76,14 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _posaljiMail() async {
     final krvnaGrupa = _krvnaGrupaController.text.trim();
     if (krvnaGrupa.isEmpty) {
-      if (!mounted) return;
       setState(() {
         _responseMessage = 'Unesite krvnu grupu.';
       });
       return;
     }
 
-    if (!mounted) return;
     setState(() {
       _isLoading = true;
       _responseMessage = null;
@@ -92,25 +90,16 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final message = await _donacijaKrviProvider.posaljiMail(krvnaGrupa);
 
-      if (!mounted) return;
-
       setState(() {
         _isLoading = false;
-        _responseMessage = null;
+        _responseMessage = 'Email uspješno poslan!';
         _krvnaGrupaController.clear();
       });
 
-      if (Navigator.canPop(context)) {
-        Navigator.of(context).pop();
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Email uspješno poslan!")),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_responseMessage!)),
+      );
     } catch (e) {
-      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _responseMessage = 'Greška: ${e.toString()}';
@@ -215,7 +204,8 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
-              color:  const Color(0xFF2A9D8F), borderRadius: BorderRadius.circular(12)),
+              color: const Color(0xFF2A9D8F),
+              borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.all(12),
           child: Text(title,
               style: TextStyle(
@@ -297,7 +287,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 14, color: textColorDark),
                   textAlign: TextAlign.center,
                 ),
-                
               ),
             ],
           ),

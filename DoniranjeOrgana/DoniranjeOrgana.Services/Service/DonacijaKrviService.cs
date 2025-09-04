@@ -28,7 +28,10 @@ namespace DoniranjeOrgana.Services.Service
         }
         public override void BeforeInsert(DonacijaKrviInsertRequest insert, Database.DonacijaKrvi entity)
         {
-            entity.DonorId = insert.DonorId;
+            if (insert.DonorId == null)
+                throw new Exception("DonorId ne smije biti null!");
+
+            entity.DonorId = insert.DonorId.Value;
             entity.DatumDonacije = insert.DatumDonacije;
             entity.Status = insert.Status;
             entity.Napomena = insert.Napomena;

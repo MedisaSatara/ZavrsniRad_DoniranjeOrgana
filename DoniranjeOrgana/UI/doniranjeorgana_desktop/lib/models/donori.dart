@@ -11,7 +11,7 @@ part 'donori.g.dart';
 @JsonSerializable()
 class Donori {
   Donori(
-    this.donoriId,
+    this.donorId,
     this.mjestoRodjenja,
     this.jmbg,
     this.telefon,
@@ -28,7 +28,7 @@ class Donori {
     this.datumSmrti,
   );
 
-  int? donoriId;
+  int? donorId;
   String? mjestoRodjenja;
   String? jmbg;
   String? telefon;
